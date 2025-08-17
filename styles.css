@@ -4,7 +4,6 @@
 
 html,
 body {
-    cursor: url("images/cursor.png"), default;
     background: url('https://64.media.tumblr.com/05e0937cc77c05f51b8c339ade1029c6/4cb2bbaf75739df2-47/s2048x3072_c0,24740,100000,100000/7157fa45dbf3543a0adeffd8dfd135be03dde7b8.png') no-repeat center center fixed;
     background-size: cover;
     overflow: hidden;
