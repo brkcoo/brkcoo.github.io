@@ -1,0 +1,105 @@
+* {
+    font-family: 'Comic Sans MS', Courier, monospace;
+    /*border: 1px solid red;
+    /**/
+}
+
+body {
+    cursor: url("cursor.png"), default;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #77bbdd;
+}
+
+header {
+    display: flex;
+    height: 1vh;
+    padding: 20px;
+    color: #fff;
+    background-color: #ffffff00;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.subheader {
+    height: 20vh;
+    width: 100%;
+    padding: 10px;
+    margin: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.dialogue-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 40%;
+}
+
+.dialogue-container img {
+    height: 80%;
+    border: 5px;
+    border-style: double;
+}
+
+.dialogue-container p {
+    font-size: 3vh;
+    height: 100%;
+    width: 100%;
+    margin: 10px;
+    word-wrap: break-word;
+    overflow-y: auto;
+
+    display: flex;
+    align-items: center;
+    text-align: left;
+
+    /* for firefox */
+    scrollbar-width: none;
+    /* for edge */
+    -ms-overflow-style: none;
+}
+
+
+.dialogue-container p::-webkit-scrollbar {
+    /* for chrome, safari, and webkit-based browsers apparently */
+    display: none;
+}
+
+.space-button {
+    cursor: pointer;
+}
+
+#evil-div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.95);
+    color:white;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+    user-select: none;
+    transition: opacity 0.5s;
+}
