@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+
+<head>
+    <title>helo bird</title>
+    <script src="https://unpkg.com/tone@next/build/Tone.js"></script>
+    <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
+    <script>
+        window.addEventListener("load", (event) => {
+            // https://github.com/tholman/cursor-effects
+            new cursoreffects.fairyDustCursor({
+                colors: ["#ff88bb", "#55ddee", "#ffeeaa", "#99dd88", "#ddbbff"]
+            });
+        })
+    </script>
+    <script src="ttt.js"></script>
+    <link rel="stylesheet" type="text/css" href="ttt.css">
+    <link rel="icon" type="image/png" href="images/toge.png" />
+</head>
+
+<body>
+    <div id="evil-div"><!--overlay to be clicked away-->
+        <h1 style="top:20%;position:fixed;">click to enter?</h1>
+        <img src="images/egg.png" style="height:60%;position:fixed;bottom:0">
+        <img src="images/bushes.png" style="position:fixed;height:80%;left:-15%;bottom:-5%">
+        <img src="images/bushes.png" style="position:fixed;height:80%;right:-15%;bottom:-5%">
+    </div>
+    <main>
+        <div class="subheader">
+            <div class="dialogue-container">
+                <img id="speaker-icon" src="images/toge.png">
+                <p id="dialogue-box"></p>
+            </div>
+        </div>
+        </div>
+        <div id="space-button-container">
+            <div id="row-1">
+                <button id="button0" class="space-button" style="height:100px;width:100px;" onClick="move(0)"></button>
+                <button id="button1" class="space-button" style="height:100px;width:100px;" onClick="move(1)"></button>
+                <button id="button2" class="space-button" style="height:100px;width:100px;" onClick="move(2)"></button>
+            </div>
+            <div id="row-2">
+                <button id="button3" class="space-button" style="height:100px;width:100px;" onClick="move(3)"></button>
+                <button id="button4" class="space-button" style="height:100px;width:100px;" onClick="move(4)"></button>
+                <button id="button5" class="space-button" style="height:100px;width:100px;" onClick="move(5)"></button>
+            </div>
+            <div id="row-3">
+                <button id="button6" class="space-button" style="height:100px;width:100px;" onClick="move(6)"></button>
+                <button id="button7" class="space-button" style="height:100px;width:100px;" onClick="move(7)"></button>
+                <button id="button8" class="space-button" style="height:100px;width:100px;" onClick="move(8)"></button>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

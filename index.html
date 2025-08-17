@@ -7,46 +7,30 @@
     <title>helo bird</title>
     <script src="https://unpkg.com/tone@next/build/Tone.js"></script>
     <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
+    <script> window.addEventListener("load", () => { new cursoreffects.fairyDustCursor({ colors: ["#ff88bb", "#55ddee", "#ffeeaa", "#99dd88", "#ddbbff"] }); });</script>
     <script src="script.js"></script>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="icon" type="image/png" href="toge.png" />
+    <link rel="icon" type="image/png" href="images/toge.png" />
 </head>
 
 <body>
-    <div id="evil-div">
-        <h1 style="top:20%;position:fixed;">click to enter?</h1>
-        <img src="egg.png" style="height:60%;position:fixed;bottom:0">
-        <img src="bushes.png" style="position:fixed;height:80%;left:-15%;bottom:-5%">
-        <img src="bushes.png" style="position:fixed;height:80%;right:-15%;bottom:-5%">
-    </div>
-    <header>
-    </header>
     <main>
-        <div class="subheader">
-            <div class="dialogue-container">
-                <img id="speaker-icon" src="toge.png">
-                <p id="dialogue-box"></p>
-            </div>
-        </div>
-        </div>
-        <div id="space-button-container">
-            <div id="row-1">
-                <button id="button0" class="space-button" style="height:100px;width:100px;" onClick="move(0)"></button>
-                <button id="button1" class="space-button" style="height:100px;width:100px;" onClick="move(1)"></button>
-                <button id="button2" class="space-button" style="height:100px;width:100px;" onClick="move(2)"></button>
-            </div>
-            <div id="row-2">
-                <button id="button3" class="space-button" style="height:100px;width:100px;" onClick="move(3)"></button>
-                <button id="button4" class="space-button" style="height:100px;width:100px;" onClick="move(4)"></button>
-                <button id="button5" class="space-button" style="height:100px;width:100px;" onClick="move(5)"></button>
-            </div>
-            <div id="row-3">
-                <button id="button6" class="space-button" style="height:100px;width:100px;" onClick="move(6)"></button>
-                <button id="button7" class="space-button" style="height:100px;width:100px;" onClick="move(7)"></button>
-                <button id="button8" class="space-button" style="height:100px;width:100px;" onClick="move(8)"></button>
-            </div>
+        <h1>secrets to untold treasures lie within</h1>
+        <div class="button-container">
+            <a class="link-button" href="tictactoe.html" style="top:10%; left:50%;">
+                <img src="images/toge.png" style="height:100%;width:100%;border-radius:30%">
+                <img src="images/ttt.png" style="position:fixed;height:100%;right:-40px;top:-30px;">
+            </a>
+            <button class="link-button" style="top:25%; left:85%;"></button>
+            <button class="link-button" style="top:75%; left:85%;"></button>
+            <button class="link-button" style="top:90%; left:50%;"></button>
+            <button class="link-button" style="top:75%; left:15%;"></button>
+            <button class="link-button" style="top:25%; left:15%;"></button>
         </div>
     </main>
 </body>
+<footer>
+    hey man
+</footer>
 
 </html>
