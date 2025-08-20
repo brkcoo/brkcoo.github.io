@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>helo bird</title>
+    <script src="cursor.js"></script>
+    <script src="chat.js" type=module defer></script>
+    <link rel="stylesheet" type="text/css" href="prac.css">
+    <link rel="icon" type="image/png" href="images/toge.png" />
+</head>
+
+<body>
+    <button class="chat-toggle">💬</button>
+    <div class="chat-wrapper">
+        <header>
+            <div class="infobar">
+                <p>porychat</p>
+            </div>
+            <button class="chat-close-button">×</button>
+        </header>
+        <main>
+            <div id="messages-go-here" class="messages-container">
+                <template id="message-template">
+                    <div class="chat-message">
+                        <div class="message-line">
+                            <div class="sender-icon">
+                                <img alt="icon" style="height:100%;width:100%;border-radius:50%;">
+                            </div>
+                            <div class="message-content">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="chat-sender">
+                            <p></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <form class="message-input-container">
+                <div class="inner-message-container">
+                    <div class="message-input">
+                        <input id="your-message-here" class="text-input" type="text" name="message"
+                            placeholder="Type message here" maxlength="140" autocomplete="off" />
+                    </div>
+                </div>
+                <input type="button" class="send-button" onclick="userMessage()" value="➤" />
+            </form>
+        </main>
+        <footer>
+        </footer>
+    </div>
+</body>
+<!--script for making the buttons work-->
+<script>
+    // toggle chat on
+    const toggleBtn = document.querySelector('.chat-toggle');
+    const chatBox = document.querySelector('.chat-wrapper');
+    toggleBtn.addEventListener('click', () => {
+        // slide button down
+        toggleBtn.classList.add('hide');
+
+        // slide chat up
+        setTimeout(() => {
+            chatBox.classList.add('open');
+        }, 400);
+    });
+    // toggle chat off
+    const toggleOffBtn = document.querySelector('.chat-close-button');
+    toggleOffBtn.addEventListener('click', () => {
+        chatBox.classList.remove('open');
+        setTimeout(() => {
+            toggleBtn.classList.remove('hide'); // slide button back up
+        }, 500);
+    });
+
+    // send message
+    const form = document.querySelector('.message-input-container');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault(); // prevent page reload
+        userMessage();
+    });
+</script>
