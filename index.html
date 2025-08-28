@@ -9,7 +9,7 @@
     <title>helo bird</title>
     <script src="https://unpkg.com/tone@next/build/Tone.js"></script>
     <script src="cursor.js"></script>
-    <script src="script.js"></script>
+    <script src="chat.js" defer></script>
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="icon" type="image/png" href="images/toge.png" />
 </head>
@@ -29,6 +29,46 @@
             <button class="link-button" style="top:25%; left:15%;"></button>
         </div>
     </main>
+    <button class="chat-toggle">💬</button>
+    <div class="chat-wrapper">
+        <div class="chat-header">
+            <div class="infobar">
+                <p>porychat</p>
+            </div>
+            <button class="chat-close-button">×</button>
+        </div>
+        <div class="chat-main">
+            <div id="messages-go-here" class="messages-container">
+                <template id="message-template">
+                    <div class="chat-message">
+                        <div class="message-line">
+                            <div class="sender-icon">
+                                <img alt="icon" style="height:100%;width:100%;border-radius:50%;">
+                            </div>
+                            <div class="message-content">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="chat-sender">
+                            <p></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <form class="message-input-container">
+                <div class="inner-message-container">
+                    <div class="message-input">
+                        <input id="your-message-here" class="text-input" type="text" name="message"
+                            placeholder="Type message here" maxlength="140" autocomplete="off" />
+                    </div>
+                </div>
+                <input type="button" class="send-button" onclick="userMessage()" value="➤" />
+            </form>
+        </div>
+        <div class="chat-footer">
+        </div>
+    </div>
+
 </body>
 
 <footer>

@@ -4,14 +4,76 @@ const container = document.getElementById('messages-go-here');
 // input related
 const textarea = document.querySelector('.text-input');
 const sendBtn = document.querySelector('.send-button');
+// toggling chat
+const toggleBtn = document.querySelector('.chat-toggle');
+const chatBox = document.querySelector('.chat-wrapper');
 
-// helper 
+// info for generating response/whatever
 const helperInfo = {
     name: 'Porygon',
     icon: 'porygon.png',
-    color: '#e6f0ff'
+    color: '#ffe6e6ff'
 };
+const replies = [
+    "It is certain",
+    "Reply hazy, try again",
+    "Don’t count on it",
+    "It is decidedly so",
+    "Ask again later",
+    "My reply is no",
+    "Without a doubt",
+    "Better not tell you now",
+    "My sources say no",
+    "Yes definitely",
+    "Cannot predict now",
+    "Outlook not so good",
+    "You may rely on it",
+    "Concentrate and ask again",
+    "Very doubtful",
+    "As I see it, yes",
+    "Most likely",
+    "Outlook good",
+    "Yes",
+    "Signs point to yes"
+]
 
+/******************
+* Event Listeners *
+******************/
+// toggle chat on
+toggleBtn.addEventListener('click', () => {
+    // slide button down
+    toggleBtn.classList.add('hide');
+
+    // slide chat up
+    setTimeout(() => {
+        chatBox.classList.add('open');
+    }, 400);
+});
+// toggle chat off
+const toggleOffBtn = document.querySelector('.chat-close-button');
+toggleOffBtn.addEventListener('click', () => {
+    chatBox.classList.remove('open');
+    setTimeout(() => {
+        toggleBtn.classList.remove('hide'); // slide button back up
+    }, 500);
+});
+
+// send message
+const form = document.querySelector('.message-input-container');
+form.addEventListener('submit', (e) => {
+    e.preventDefault(); // prevent page reload
+    userMessage();
+});
+
+// intro message
+toggleBtn.addEventListener('click', () => {
+    newMessage('Please request assistance.', 'Porygon', '#ffe6e6ff', 'porygon.png');
+}, { once: true });
+
+/*******************
+ * Event Listeners *
+ ******************/
 // create and display element for a new message
 const newMessage = (message, sender = '', color, icon) => {
     const ele = msgTemplate.content.cloneNode(true).querySelector('.chat-message');     // create clone
@@ -33,13 +95,15 @@ const newMessage = (message, sender = '', color, icon) => {
     return ele;
 }
 
+/************
+* Messaging *
+************/
 // generate and return message from input
+// ai = magic 8 ball for now
 async function getAiResponse(input) {
-    const response = fetch(
-        
-    );
-    console.log(response.text);
-    return "fjrafref";
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    let index = Math.floor(Math.random() * replies.length);
+    return replies[index];
 }
 
 // sending the message
@@ -84,8 +148,3 @@ async function userMessage() {
     // re-enable input
     Array.from(form.elements).forEach(el => el.disabled = false);
 }
-
-// intro message
-toggleBtn.addEventListener('click', () => {
-    newMessage('Please request assistance.', 'Porygon', '#e6f0ff', 'porygon.png');
-}, { once: true });
