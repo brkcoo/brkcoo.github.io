@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>helo bird</title>
-    <script src="https://unpkg.com/tone@next/build/Tone.js"></script>
     <script src="cursor.js"></script>
     <script src="chat.js" defer></script>
     <link rel="stylesheet" type="text/css" href="styles.css">
@@ -22,52 +21,16 @@
                 <img src="images/toge.png" style="height:100%;width:100%;border-radius:30%">
                 <img src="images/ttt.png" style="position:fixed;height:100%;right:-40px;top:-30px;">
             </a>
-            <button class="link-button" style="top:25%; left:85%;"></button>
-            <button class="link-button" style="top:75%; left:85%;"></button>
-            <button class="link-button" style="top:90%; left:50%;"></button>
-            <button class="link-button" style="top:75%; left:15%;"></button>
-            <button class="link-button" style="top:25%; left:15%;"></button>
+            <a class="link-button" href="grid.html" style="top:25%; left:85%;">
+                <img src="images/unk.png" style="height:100%;width:100%;border-radius:30%">
+            </a>
+            <a class="link-button" style="top:75%; left:85%;"></a>
+            <a class="link-button" style="top:90%; left:50%;"></a>
+            <a class="link-button" style="top:75%; left:15%;"></a>
+            <a class="link-button" style="top:25%; left:15%;"></a>
         </div>
     </main>
-    <button class="chat-toggle">💬</button>
-    <div class="chat-wrapper">
-        <div class="chat-header">
-            <div class="infobar">
-                <p>porychat</p>
-            </div>
-            <button class="chat-close-button">×</button>
-        </div>
-        <div class="chat-main">
-            <div id="messages-go-here" class="messages-container">
-                <template id="message-template">
-                    <div class="chat-message">
-                        <div class="message-line">
-                            <div class="sender-icon">
-                                <img alt="icon" style="height:100%;width:100%;border-radius:50%;">
-                            </div>
-                            <div class="message-content">
-                                <p></p>
-                            </div>
-                        </div>
-                        <div class="chat-sender">
-                            <p></p>
-                        </div>
-                    </div>
-                </template>
-            </div>
-            <form class="message-input-container">
-                <div class="inner-message-container">
-                    <div class="message-input">
-                        <input id="your-message-here" class="text-input" type="text" name="message"
-                            placeholder="Type message here" maxlength="140" autocomplete="off" />
-                    </div>
-                </div>
-                <input type="button" class="send-button" onclick="userMessage()" value="➤" />
-            </form>
-        </div>
-        <div class="chat-footer">
-        </div>
-    </div>
+
 
 </body>
 
