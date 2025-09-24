@@ -469,7 +469,22 @@ function findDifferenceBetween(lo, hi) {
   return array;
 }
 
+// if the entry has a score already on anilist, remove it from consideration
+function hideScoredEntries() {
+  const crabs = document.getElementsByClassName("crab");
+  for (const crab in crabs) {
+    const index = parseInt(child.id);
+    if (user.list[index].mediaListEntry.score != null) {
+      crab.style.display = "none";
+    }
+  }
+}
+
 document.getElementById("b3").addEventListener("click", () => {
   scoreSortedCrabs();
   updateAllScores();
+});
+
+document.getElementById("b2").addEventListener("click", () => {
+  hideScoredEntries();
 });
