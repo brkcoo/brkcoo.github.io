@@ -1,41 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<html>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>helo bird</title>
-    <script src="cursor.js"></script>
-    <script src="chat.js" defer></script>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="scripts/cursor.js"></script>
+    <script src="scripts/chat.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="styles/styles.css" />
     <link rel="icon" type="image/png" href="images/toge.png" />
-</head>
+  </head>
 
-<body>
+  <body>
     <main>
-        <h1>secrets to untold treasures lie within</h1>
-        <div class="button-container">
-            <a class="link-button" href="tictactoe.html" style="top:10%; left:50%;">
-                <img src="images/toge.png" style="height:100%;width:100%;border-radius:30%">
-                <img src="images/ttt.png" style="position:fixed;height:100%;right:-40px;top:-30px;">
-            </a>
-            <a class="link-button" href="grid.html" style="top:25%; left:85%;">
-                <img src="images/unk.png" style="height:100%;width:100%;border-radius:30%">
-            </a>
-            <a class="link-button" style="top:75%; left:85%;"></a>
-            <a class="link-button" style="top:90%; left:50%;"></a>
-            <a class="link-button" style="top:75%; left:15%;"></a>
-            <a class="link-button" style="top:25%; left:15%;"></a>
-        </div>
+      <h1>secrets to untold treasures lie within</h1>
+      <div class="button-container">
+        <a href="a.html" class="link-button"
+          ><img
+            src="https://img.pokemondb.net/sprites/black-white/anim/normal/wingull.gif"
+            alt="link 1"
+        /></a>
+        <a href="grid.html" class="link-button"
+          ><img
+            src="https://img.pokemondb.net/sprites/black-white/anim/normal/swablu.gif"
+            alt="link 2"
+        /></a>
+        <a href="tictactoe.html" class="link-button"
+          ><img
+            src="https://img.pokemondb.net/sprites/black-white/anim/normal/togekiss.gif"
+            alt="link 3"
+        /></a>
+        <a href="" class="link-button"
+          ><img
+            src="https://img.pokemondb.net/sprites/black-white/anim/normal/mantine.gif"
+            alt="link 4"
+        /></a>
+      </div>
     </main>
+  </body>
 
+  <footer>hey man</footer>
 
-</body>
+  <script>
+    // randomizing button placements for fun
+    const buttons = document.getElementsByClassName("link-button");
+    let i = 0;
+    sources = ["tier.png", "grid.png", "ttt.png", "nothing.png"];
+    for (const el of buttons) {
+      el.style.top = `${Math.random() * 100}%`;
+      el.style.left = `${Math.random() * (33 * i) + 33 * i - 33}%`;
+      const popup = document.createElement("img");
+      popup.setAttribute("class", "popup-label");
+      popup.src = `images/${sources[i]}`;
+      popup.style.opacity = 0;
 
-<footer>
-    hey man
-</footer>
+      popup.style.bottom = `${Math.random() * 50 + 50}%`;
+      popup.style.left = `${Math.random() * 25 + 25}%`;
+      el.addEventListener("mouseenter", () => {
+        popup.style.opacity = 1;
+      });
 
+      el.addEventListener("mouseleave", () => {
+        popup.style.opacity = 0;
+      });
+
+      el.append(popup);
+      i++;
+    }
+  </script>
 </html>
