@@ -472,7 +472,7 @@ function findDifferenceBetween(lo, hi) {
 // if the entry has a score already on anilist, remove it from consideration
 function hideScoredEntries() {
   const crabs = document.getElementsByClassName("crab");
-  for (const crab in crabs) {
+  for (const crab of crabs) {
     const index = parseInt(crab.id);
     if (user.list[index].mediaListEntry.score != 0) {
       crab.style.display = "none";
