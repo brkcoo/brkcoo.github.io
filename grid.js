@@ -16,27 +16,32 @@ function SetupGrid() {
     }
     const box = svg.getBBox();
     svg.setAttribute("viewBox", `${box.x} ${box.y} ${box.width} ${box.height}`);
-    GetHexagon(0, 0).style = "stroke:#3526db;stroke-width:4;"
+    GetHexagon(0, 0).style = "stroke:#3526db;stroke-width:4;";
     svg.appendChild(GetHexagon(0, 0));
 }
 
-const GetHexagon = (col, row) => document.querySelector(`[_coord="${col},${row}"]`);
+const GetHexagon = (col, row) =>
+    document.querySelector(`[_coord="${col},${row}"]`);
 
 function MakeHexagon(col, row) {
     const R = 20; // radius
     const rad = Math.PI / 180;
     const cx = 1.5 * R * col;
-    const cy = Math.sqrt(3) * R * row + (Math.abs(col % 2)) * (Math.sqrt(3) / 2 * R);
+    const cy =
+        Math.sqrt(3) * R * row + Math.abs(col % 2) * ((Math.sqrt(3) / 2) * R);
 
     const points = Array.from({ length: 6 }, (_, i) => {
-        const a = (i * 60) * rad;
+        const a = i * 60 * rad;
         const x = cx + R * Math.cos(a);
         const y = cy + R * Math.sin(a);
         return `${x.toFixed(1)},${y.toFixed(1)}`;
-    }).join(' ');
+    }).join(" ");
 
     // make html element
-    const hex = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    const hex = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "polygon"
+    );
     hex.setAttribute("points", points);
     hex.setAttribute("_coord", `${col},${row}`);
 
@@ -60,10 +65,10 @@ function ToggleHexagon(hex) {
 
 function ExportGrid() {
     var exportString = "";
-    selected.forEach(element => {
+    selected.forEach((element) => {
         const coord = element.getAttribute("_coord");
         exportString += coord;
-        exportString += ' ';
+        exportString += " ";
     });
     return exportString;
 }
@@ -75,13 +80,12 @@ function ImportGrid(importString) {
     }
 
     // create new grid from string
-    const hexagons = importString.split(' ');
+    const hexagons = importString.split(" ");
     const array = [];
-    hexagons.forEach(pair => {
-        const [x, y] = pair.split(',');
-        if (x && y)
-            MakeHexagon(x, y);
-    })
+    hexagons.forEach((pair) => {
+        const [x, y] = pair.split(",");
+        if (x && y) MakeHexagon(x, y);
+    });
 
     // resize
     const box = svg.getBBox();
@@ -89,21 +93,18 @@ function ImportGrid(importString) {
 }
 
 // import/export buttons
-const eb = document.querySelector('.export-button');
-const ib = document.querySelector('.import-button');
-const rb = document.querySelector('.reset-button');
-ib.addEventListener('click', () => {
-    let importString = prompt('enter import string');
-    if (importString)
-        ImportGrid(importString);
+const eb = document.querySelector(".export-button");
+const ib = document.querySelector(".import-button");
+const rb = document.querySelector(".reset-button");
+ib.addEventListener("click", () => {
+    let importString = prompt("enter import string");
+    if (importString) ImportGrid(importString);
 });
-eb.addEventListener('click', () => {
-    if (selected.length > 0)
-        window.alert(ExportGrid());
+eb.addEventListener("click", () => {
+    if (selected.length > 0) window.alert(ExportGrid());
 });
-rb.addEventListener('click', () => {
+rb.addEventListener("click", () => {
     SetupGrid();
 });
-
 
 SetupGrid();
