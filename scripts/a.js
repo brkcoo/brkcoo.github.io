@@ -473,8 +473,8 @@ function findDifferenceBetween(lo, hi) {
 function hideScoredEntries() {
   const crabs = document.getElementsByClassName("crab");
   for (const crab in crabs) {
-    const index = parseInt(child.id);
-    if (user.list[index].mediaListEntry.score != null) {
+    const index = parseInt(crab.id);
+    if (user.list[index].mediaListEntry.score != 0) {
       crab.style.display = "none";
     }
   }
