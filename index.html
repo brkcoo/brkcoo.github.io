@@ -7,7 +7,7 @@
     <script src="scripts/cursor.js"></script>
     <script src="scripts/chat.js" defer></script>
     <link rel="stylesheet" type="text/css" href="styles/styles.css" />
-    <link rel="icon" type="image/png" href="images/toge.png" />
+    <link rel="icon" type="image/png" href="favicon.ico" />
   </head>
 
   <body>
@@ -29,7 +29,7 @@
             src="https://img.pokemondb.net/sprites/black-white/anim/normal/togekiss.gif"
             alt="link 3"
         /></a>
-        <a href="" class="link-button"
+        <a href="fish.html" class="link-button"
           ><img
             src="https://img.pokemondb.net/sprites/black-white/anim/normal/mantine.gif"
             alt="link 4"
@@ -44,7 +44,7 @@
     // randomizing button placements for fun
     const buttons = document.getElementsByClassName("link-button");
     let i = 0;
-    sources = ["tier.png", "grid.png", "ttt.png", "nothing.png"];
+    sources = ["tier.png", "grid.png", "ttt.png", "fishing.png"];
     for (const el of buttons) {
       el.style.top = `${Math.random() * 100}%`;
       el.style.left = `${Math.random() * (33 * i) + 33 * i - 33}%`;
