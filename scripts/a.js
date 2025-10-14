@@ -2,7 +2,7 @@ var user = {
   name: null,
   avatar: null,
   list: [],
-  sortedTiers: [],
+  scoredEntries: [],
   accessToken: null,
 };
 var selectedCrab;
@@ -94,6 +94,7 @@ const tierlist = (() => {
   container.setAttribute("id", "tier-container");
   wrapper.append(container);
 
+  // create default tiers
   const colors = [
     "#b624b6ff",
     "#25b3b3ff",
@@ -102,11 +103,16 @@ const tierlist = (() => {
     "#b82929ff",
   ];
   const text = ["S", "A", "B", "C", "D"];
-  for (let i = 0; i < 5; i++) createRow(colors[i], text[i]);
+  const his = [100, 90, 80, 70, 60];
+  const los = [90, 80, 70, 60, 0];
+  for (let i = 0; i < 5; i++) createRow(colors[i], text[i], i, los[i], his[i]);
 
-  function createRow(color, text) {
+  function createRow(color, text, id, lo, hi) {
     const row = document.createElement("div");
     row.setAttribute("class", "tier-row");
+    row.setAttribute("data-id", id);
+    row.setAttribute("data-lo", lo);
+    row.setAttribute("data-hi", hi);
     container.append(row);
 
     const labelholder = document.createElement("div");
@@ -122,8 +128,6 @@ const tierlist = (() => {
 
     const sortable = document.createElement("div");
     sortable.setAttribute("class", "tier-sort");
-    row.append(sortable);
-
     sortable.addEventListener("dragenter", (e) => {
       e.preventDefault();
       if (selectedCrab.parentNode != sortable) {
@@ -133,8 +137,241 @@ const tierlist = (() => {
     sortable.addEventListener("dragover", (e) => {
       e.preventDefault();
     });
+    row.append(sortable);
+
+    const optionsContainer = document.createElement("div");
+    optionsContainer.setAttribute("class", "options-container");
+    row.append(optionsContainer);
+
+    const options = document.createElement("div");
+    options.setAttribute("class", "options-button");
+    options.innerText = "⚙️";
+    optionsContainer.append(options);
+    options.addEventListener("click", () => {
+      rowOptions(row);
+    });
+
+    const moveUp = document.createElement("div");
+    moveUp.setAttribute("class", "move-up-button");
+    moveUp.innerText = "☝️";
+    moveUp.addEventListener("click", () => {
+      swapRows(parseInt(row.dataset.id), parseInt(row.dataset.id) - 1);
+    });
+    optionsContainer.append(moveUp);
+
+    const moveDown = document.createElement("div");
+    moveDown.setAttribute("class", "move-down-button");
+    moveDown.innerText = "👇";
+    moveDown.addEventListener("click", () => {
+      swapRows(parseInt(row.dataset.id), parseInt(row.dataset.id) + 1);
+    });
+
+    optionsContainer.append(moveDown);
+
+    return row;
   }
+
+  function clearRow(row) {
+    const sortable = row.querySelector(".tier-sort");
+    while (sortable.children.length > 0) {
+      const bucket = document.querySelector("#bucket-holder");
+      bucket.appendChild(sortable.children[0]);
+    }
+  }
+
+  function swapRows(ix, iy) {
+    // get rows from indices
+    const children = container.children;
+    // exit if edge movement
+    if (iy < 0 || iy >= children.length) return;
+    const x = children[ix];
+    const y = children[iy];
+
+    // swap values
+    const [a, b, c] = [x.dataset.id, x.dataset.lo, x.dataset.hi];
+
+    x.setAttribute("data-id", y.dataset.id);
+    x.setAttribute("data-lo", y.dataset.lo);
+    x.setAttribute("data-hi", y.dataset.hi);
+
+    y.setAttribute("data-id", a);
+    y.setAttribute("data-lo", b);
+    y.setAttribute("data-hi", c);
+
+    // swap positions
+    if (ix > iy) container.insertBefore(x, y);
+    else container.insertBefore(y, x);
+  }
+
+  return { createRow, clearRow };
 })();
+
+function rowOptions(row) {
+  const popup = document.createElement("div");
+  popup.setAttribute("class", "popup");
+  document.querySelector("body").append(popup);
+
+  const dim = document.createElement("div");
+  dim.setAttribute("class", "dim");
+  popup.append(dim);
+
+  const content = document.createElement("div");
+  content.setAttribute("class", "popup-content");
+  popup.append(content);
+
+  const header = document.createElement("span");
+  header.setAttribute("class", "label");
+  header.innerText = "Row Options";
+  content.append(header);
+
+  // FINISH CLOSE BUTTON, ABSOLUTE POSITIONED AT TOP RIGHT OF POPUP
+  const closeButton = document.createElement("div");
+  closeButton.setAttribute("class", "popup-close-button");
+  closeButton.innerText = "×";
+  content.append(closeButton);
+
+  // inputs
+  const form = document.createElement("form");
+  form.setAttribute("class", "options-form");
+  content.append(form);
+
+  const p1 = document.createElement("p");
+  p1.innerText = "row label";
+  form.append(p1);
+
+  const labelInput = document.createElement("input");
+  labelInput.setAttribute("class", "label-input-area");
+  labelInput.type = "name";
+  labelInput.maxLength = 100;
+  labelInput.value = row.querySelector(".label-holder .label").innerText;
+  labelInput.placeholder = "enter new label";
+  form.append(labelInput);
+
+  const p2 = document.createElement("p");
+  p2.innerText = "score range";
+  form.append(p2);
+
+  const loInput = document.createElement("input");
+  loInput.setAttribute("class", "label-input-area");
+  loInput.type = "number";
+  loInput.step = 1;
+  loInput.min = 0;
+  loInput.max = 100;
+  loInput.placeholder = `${row.dataset.lo} (exclusive)`;
+  form.append(loInput);
+
+  const hiInput = document.createElement("input");
+  hiInput.setAttribute("class", "label-input-area");
+  hiInput.type = "number";
+  hiInput.step = 1;
+  hiInput.min = 0;
+  hiInput.max = 100;
+  hiInput.placeholder = `${row.dataset.hi} (inclusive)`;
+  form.append(hiInput);
+
+  // save and apply changes
+  function saveAndApply() {
+    if (labelInput.checkValidity() && labelInput.value.length > 0)
+      row.querySelector(".label-holder .label").innerText = labelInput.value;
+    let newLo =
+      loInput.checkValidity() && loInput.value !== ""
+        ? loInput.value
+        : row.dataset.lo;
+
+    let newHi =
+      hiInput.checkValidity() && hiInput.value !== ""
+        ? hiInput.value
+        : row.dataset.hi;
+
+    // fix order if necessary
+    if (parseInt(newLo) > parseInt(newHi)) {
+      let temp = newLo;
+      newLo = newHi;
+      newHi = temp;
+    }
+
+    row.dataset.lo = newLo;
+    row.dataset.hi = newHi;
+
+    // close
+    popup.remove();
+  }
+
+  closeButton.addEventListener("click", () => {
+    saveAndApply();
+  });
+  dim.addEventListener("click", () => {
+    saveAndApply();
+  });
+
+  const buttonRow1 = document.createElement("div");
+  content.append(buttonRow1);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.innerText = "Delete Row";
+  deleteButton.addEventListener("click", () => {
+    const rows = row.parentNode.children;
+    if (rows.length === 1) return; // cant remove last row
+    const id = parseInt(row.dataset.id);
+    for (let i = id; i < rows.length; i++) {
+      rows[i].dataset.id = parseInt(rows[i].dataset.id) - 1;
+    }
+    tierlist.clearRow(row);
+    row.remove();
+    popup.remove();
+  });
+  buttonRow1.append(deleteButton);
+
+  const clearButton = document.createElement("button");
+  clearButton.innerText = "Clear Row";
+  clearButton.addEventListener("click", () => {
+    tierlist.clearRow(row);
+  });
+  buttonRow1.append(clearButton);
+
+  const buttonRow2 = document.createElement("div");
+  content.append(buttonRow2);
+
+  const createAbove = document.createElement("button");
+  createAbove.innerText = "Create Row Above";
+  createAbove.addEventListener("click", () => {
+    const rows = row.parentNode.children;
+    const id = parseInt(row.dataset.id);
+    let lo, hi;
+    if (id === 0) {
+      hi = 100;
+    } else {
+      hi = row.parentNode.children[id - 1].dataset.lo;
+    }
+    lo = row.dataset.hi;
+    for (let i = id; i < rows.length; i++) {
+      rows[i].dataset.id = parseInt(rows[i].dataset.id) + 1;
+    }
+    const newRow = tierlist.createRow("#ff8800ff", "new", id, lo, hi);
+    row.parentNode.insertBefore(newRow, row);
+  });
+  buttonRow2.append(createAbove);
+
+  const createBelow = document.createElement("button");
+  createBelow.innerText = "Create Row Below";
+  createBelow.addEventListener("click", () => {
+    const rows = row.parentNode.children;
+    const id = parseInt(row.dataset.id);
+    let lo, hi;
+    if (id === rows.length - 1) {
+      lo = 0;
+    } else {
+      lo = row.parentNode.children[id + 1].dataset.hi;
+    }
+    hi = row.dataset.lo;
+    for (let i = id + 1; i < rows.length; i++) {
+      rows[i].dataset.id = parseInt(rows[i].dataset.id) + 1;
+    }
+    const newRow = tierlist.createRow("#ff8800ff", "new", id + 1, lo, hi);
+    row.parentNode.insertBefore(newRow, rows[id + 1]);
+  });
+  buttonRow2.append(createBelow);
+}
 
 // create sortable anime entries and starting container for them
 const bucket = (() => {
@@ -151,7 +388,7 @@ const bucket = (() => {
   holder.addEventListener("dragenter", (e) => {
     e.preventDefault();
     if (selectedCrab.parentNode != holder) {
-      selectedCrab.parentNode = holder;
+      holder.appendChild(selectedCrab);
     }
   });
   holder.addEventListener("dragover", (e) => {
@@ -211,34 +448,6 @@ const bucket = (() => {
   return { createCrab };
 })();
 
-// set up access token and list if applicable
-const userSetup = async () => {
-  // check if a previous list exists
-  user.list = JSON.parse(localStorage.getItem("list") || []);
-  for (let i = 0; i < user.list.length; i++) bucket.createCrab(i, user.list[i]);
-
-  // check previous user info
-  user.name = localStorage.getItem("name") || null;
-  user.avatar = localStorage.getItem("avatar") || null;
-  if (user.name != null) {
-    document.getElementById("user-avatar").src = user.avatar;
-    document.getElementById("user-name").innerText = user.name;
-    introPopUp.popup.style.display = "none";
-  }
-
-  // get access token from url (if already authenticated)
-  const hash = window.location.hash.substring(1);
-  const urlParams = new URLSearchParams(hash);
-  const token = urlParams.get("access_token");
-  if (token == null) return;
-  user.accessToken = token;
-
-  // get user info from token and save
-  [user.name, user.avatar] = await getUserInfoWithToken();
-  localStorage.setItem("name", user.name);
-  localStorage.setItem("avatar", user.avatar);
-};
-
 // using this until i add functionality for ranking other users lists
 const tempUserSetup = (async () => {
   // get access token from url (if already authenticated)
@@ -246,8 +455,8 @@ const tempUserSetup = (async () => {
   const urlParams = new URLSearchParams(hash);
   const token = urlParams.get("access_token");
   if (token == null) return;
+  console.log(token);
   user.accessToken = token;
-
   // get user info from token and save
   [user.name, user.avatar] = await getUserInfoWithToken();
   document.getElementById("user-avatar").src = user.avatar;
@@ -364,16 +573,12 @@ function updateAllScores() {
     return;
   }
 
-  const scoredList = user.list.filter((entry) => entry.assignedScore != null);
-  if (scoredList.length == 0) return; // empty tier list
-  const sortedList = scoredList.sort(
-    (a, b) => a.assignedScore - b.assignedScore
-  );
+  if (user.scoredEntries.length == 0) return; // empty tier list
 
   var curScore;
   var idArray = [];
-  curScore = sortedList[0].assignedScore;
-  for (const entry of sortedList) {
+  curScore = user.scoredEntries[0].assignedScore;
+  for (const entry of user.scoredEntries) {
     if (curScore != entry.assignedScore) {
       // new score, process previous entries
       updateScores(idArray, curScore);
@@ -389,6 +594,7 @@ function updateAllScores() {
 // send api request to update scores (using mediaListEntry ids, NOT media ids)
 // all entries will be given the same score in this call
 function updateScores(ids, score) {
+  if (ids.length <= 0) return;
   var mutation = `
     mutation UpdateMediaListEntries($ids: [Int], $scoreRaw: Int) {
       UpdateMediaListEntries(ids: $ids, scoreRaw: $scoreRaw) {
@@ -407,7 +613,7 @@ function updateScores(ids, score) {
 
 // set anilist scores to 0 for any entry that wasn't in the tier list
 function resetUntieredEntryScores() {
-  if (token == null) {
+  if (user.accessToken == null) {
     alert("no token found, please login to anilist");
     return;
   }
@@ -423,31 +629,25 @@ function resetUntieredEntryScores() {
 
 // assign scores to the sorted entries
 function scoreSortedCrabs(scoringMethod = "unorderedWithinTier") {
-  user.sortedTiers = [];
+  user.scoredEntries = [];
 
   // get arrays of anime from the sorted elements
-  const rows = document.getElementsByClassName("tier-sort");
+  const rows = document.getElementsByClassName("tier-row");
   for (const row of rows) {
-    var tier = [];
-    for (const child of row.children) {
-      const index = parseInt(child.id);
-      tier.push(user.list[index]);
-    }
-    user.sortedTiers.push(tier);
-  }
+    // get relevant information and entries from row
+    var children = row.querySelector(".tier-sort").children;
+    var [lo, hi] = [parseInt(row.dataset.lo), parseInt(row.dataset.hi)];
+    var score = hi;
 
-  // assign a score to each entry, dependent on scoring method
-  var score = 100;
-  for (const tier of user.sortedTiers) {
-    for (const entry of tier) {
+    for (const child of children) {
+      // iterate through entries in row entry in list and assign score
+      const index = parseInt(child.id);
+      const entry = user.list[index];
       entry.assignedScore = score;
-      console.log(entry.title.romaji, score);
+      user.scoredEntries.push(entry);
       if (scoringMethod === "orderedWithinTier") {
-        score -= 10 / tier.length;
+        score -= (hi - lo) / row.children.length;
       }
-    }
-    if (scoringMethod === "unorderedWithinTier") {
-      score -= 10;
     }
   }
 }
@@ -455,15 +655,13 @@ function scoreSortedCrabs(scoringMethod = "unorderedWithinTier") {
 // get list of entries with a difference (between lo and hi) between the user's given score and the tier list assigned score
 function findDifferenceBetween(lo, hi) {
   const array = [];
-  for (const tier of user.sortedTiers) {
-    for (const entry of tier) {
-      const diff =
-        entry.mediaListEntry.score != null
-          ? entry.assignedScore - entry.mediaListEntry.score
-          : 0;
-      if (Math.abs(diff) >= lo && Math.abs(diff) <= hi) {
-        array.push({ entry, diff });
-      }
+  for (const entry of user.scoredEntries) {
+    const diff =
+      entry.mediaListEntry.score != null
+        ? entry.assignedScore - entry.mediaListEntry.score
+        : 0;
+    if (Math.abs(diff) >= lo && Math.abs(diff) <= hi) {
+      array.push({ entry, diff });
     }
   }
   return array;
@@ -480,11 +678,18 @@ function hideScoredEntries() {
   }
 }
 
+document.getElementById("b2").addEventListener("click", () => {
+  hideScoredEntries();
+});
+
 document.getElementById("b3").addEventListener("click", () => {
   scoreSortedCrabs();
   updateAllScores();
 });
 
-document.getElementById("b2").addEventListener("click", () => {
-  hideScoredEntries();
-});
+/*
+ *  TO-DO LIST
+ *  1. create interface for confirming score upload to anilist (score ranges should take place at THIS point)
+ *  2. reorganize this mega-file into separate files
+ *  3. improve initial starting experience / allow for no login
+ */
