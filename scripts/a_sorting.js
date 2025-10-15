@@ -1,88 +1,8 @@
-var user = {
-  name: null,
-  avatar: null,
-  list: [],
-  scoredEntries: [],
-  accessToken: null,
-};
-var selectedCrab;
+var selectedCrab; // for moving crabs between tiers and the bucket
 
-const introPopUp = (() => {
-  const popup = document.createElement("div");
-  popup.setAttribute("class", "popup");
-  document.querySelector("body").append(popup);
-
-  const dim = document.createElement("div");
-  dim.setAttribute("class", "dim");
-  popup.append(dim);
-
-  const content = document.createElement("div");
-  content.setAttribute("class", "popup-content");
-  popup.append(content);
-
-  const header = document.createElement("span");
-  header.setAttribute("class", "label");
-  content.append(header);
-
-  const message = document.createElement("p");
-  message.style.lineHeight = "1.5rem";
-  message.style.margin = "0";
-  content.append(message);
-
-  const anilist = document.createElement("a");
-  anilist.setAttribute("class", "anilist-button");
-  anilist.href =
-    "https://anilist.co/api/v2/oauth/authorize?client_id=30481&response_type=token";
-  anilist.innerText = "Login with Anilist";
-  content.append(anilist);
-
-  const message_2 = document.createElement("p");
-  message_2.style.lineHeight = "1.5rem";
-  message_2.style.margin = "0";
-  //content.append(message_2);
-
-  const form = document.createElement("div");
-  form.setAttribute("class", "popup-form");
-  //content.append(form);
-
-  const input = document.createElement("input");
-  input.setAttribute("class", "input-field");
-  input.placeholder = "search for user";
-  //form.append(input);
-
-  const search = document.createElement("button");
-  search.setAttribute("class", "search-button");
-  search.innerText = "Go!";
-  //form.append(search);
-
-  const confirm = document.createElement("button");
-  confirm.setAttribute("class", "confirm-button");
-  content.append(confirm);
-  confirm.innerText = "continue";
-  confirm.style.display = "none";
-
-  header.innerText = "Tier List Maker";
-  message.innerText =
-    "Please login with Anilist to make a tier list of your own anime list and update scores to your account.";
-  message_2.innerText =
-    "Alternatively, you can search for another user's to make a tier list out of";
-
-  search.addEventListener("click", async () => {
-    const res = await getUserList(input.value);
-    if (!res) {
-      console.log("erm");
-    } else {
-      user.name = input.value;
-      confirm.style.display = "block";
-    }
-  });
-
-  confirm.addEventListener("click", () => {});
-
-  return { popup };
-})();
-
-// create rows for anime to be sorted in
+// creates tier list and default tiers
+// includes row creation, row swapping, and row clearing
+// has functionality to serve as container for crabs
 const tierlist = (() => {
   const body = document.querySelector("body");
 
@@ -171,6 +91,7 @@ const tierlist = (() => {
     return row;
   }
 
+  // return the entries in a row to the bucket
   function clearRow(row) {
     const sortable = row.querySelector(".tier-sort");
     while (sortable.children.length > 0) {
@@ -179,6 +100,7 @@ const tierlist = (() => {
     }
   }
 
+  // swapping the position of adjacent rows
   function swapRows(ix, iy) {
     // get rows from indices
     const children = container.children;
@@ -204,8 +126,11 @@ const tierlist = (() => {
   }
 
   return { createRow, clearRow };
-})();
+});
 
+// creates an options popup for a row
+// allows changing name/color, row clearing, row deletion, row creation above/below
+// TO BE REMOVED: lo/hi settings
 function rowOptions(row) {
   const popup = document.createElement("div");
   popup.setAttribute("class", "popup");
@@ -224,7 +149,6 @@ function rowOptions(row) {
   header.innerText = "Row Options";
   content.append(header);
 
-  // FINISH CLOSE BUTTON, ABSOLUTE POSITIONED AT TOP RIGHT OF POPUP
   const closeButton = document.createElement("div");
   closeButton.setAttribute("class", "popup-close-button");
   closeButton.innerText = "×";
@@ -445,28 +369,8 @@ const bucket = (() => {
     });
   }
 
-  return { createCrab };
-})();
-
-// using this until i add functionality for ranking other users lists
-const tempUserSetup = (async () => {
-  // get access token from url (if already authenticated)
-  const hash = window.location.hash.substring(1);
-  const urlParams = new URLSearchParams(hash);
-  const token = urlParams.get("access_token");
-  if (token == null) return;
-  console.log(token);
-  user.accessToken = token;
-  // get user info from token and save
-  [user.name, user.avatar] = await getUserInfoWithToken();
-  document.getElementById("user-avatar").src = user.avatar;
-  document.getElementById("user-name").innerText = user.name;
-  introPopUp.popup.style.display = "none";
-
-  await getUserList(user.name);
-
-  for (let i = 0; i < user.list.length; i++) bucket.createCrab(i, user.list[i]);
-})();
+  return { holder, createCrab };
+});
 
 // is element b before element a?
 function isBefore(a, b) {
@@ -478,218 +382,4 @@ function isBefore(a, b) {
   return false;
 }
 
-// make api request to anilist.co
-async function apiRequest(query, variables) {
-  try {
-    const response = await fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + user.accessToken,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        query: query,
-        variables: variables,
-      }),
-    });
-    return response.json();
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
-// get username and avatar associated with access token
-async function getUserInfoWithToken() {
-  const query = `
-    query {
-      Viewer {
-        name
-        avatar {
-          medium
-        }
-      }
-    }
-  `;
-
-  const res = await apiRequest(query);
-  return [res.data.Viewer.name, res.data.Viewer.avatar.medium];
-}
-
-// get the complete list of anime entries for a username
-async function getUserList(userName) {
-  const query = `
-      query ($userName: String){
-        MediaListCollection(userName: $userName, type: ANIME) {
-          lists {
-            entries {
-              media {
-                title {
-                    romaji
-                    english
-                }
-                coverImage{
-                    medium
-                }
-                startDate {
-                    year     			
-                } 
-                mediaListEntry {
-                  id
-                  createdAt
-                  score (format:POINT_100)
-                }
-              }
-            }
-          }
-        }
-      }
-    `;
-
-  const variables = {
-    userName: userName,
-  };
-
-  const res = await apiRequest(query, variables);
-  if (res.data == null) return false;
-
-  res.data.MediaListCollection.lists.forEach((list) => {
-    list.entries.forEach((entry) => {
-      user.list.push(entry.media);
-    });
-  });
-
-  localStorage.setItem("list", JSON.stringify(user.list));
-  console.log(user.list);
-  return true;
-}
-
-// update anilist scores for all tiered entries
-// requires that the entries have been scored by scoreSortedCrabs()
-function updateAllScores() {
-  if (user.accessToken == null) {
-    alert("no token found, please login to anilist");
-    return;
-  }
-
-  if (user.scoredEntries.length == 0) return; // empty tier list
-
-  var curScore;
-  var idArray = [];
-  curScore = user.scoredEntries[0].assignedScore;
-  for (const entry of user.scoredEntries) {
-    if (curScore != entry.assignedScore) {
-      // new score, process previous entries
-      updateScores(idArray, curScore);
-      curScore = entry.assignedScore;
-      idArray = [];
-    }
-    if (entry.assignedScore === entry.mediaListEntry.score) continue; // no change to existing score
-    idArray.push(entry.mediaListEntry.id);
-  }
-  updateScores(idArray, curScore); // handle final batch
-}
-
-// send api request to update scores (using mediaListEntry ids, NOT media ids)
-// all entries will be given the same score in this call
-function updateScores(ids, score) {
-  if (ids.length <= 0) return;
-  var mutation = `
-    mutation UpdateMediaListEntries($ids: [Int], $scoreRaw: Int) {
-      UpdateMediaListEntries(ids: $ids, scoreRaw: $scoreRaw) {
-        score(format: POINT_100)
-      }
-    }    
-  `;
-
-  var variables = {
-    ids: ids,
-    scoreRaw: score,
-  };
-
-  return apiRequest(mutation, variables);
-}
-
-// set anilist scores to 0 for any entry that wasn't in the tier list
-function resetUntieredEntryScores() {
-  if (user.accessToken == null) {
-    alert("no token found, please login to anilist");
-    return;
-  }
-
-  var idArray = [];
-  for (const entry of user.list) {
-    if (entry.assignedScore == null) {
-      idArray.push(entry.mediaListEntry.id);
-    }
-  }
-  updateScores(idArray, 0);
-}
-
-// assign scores to the sorted entries
-function scoreSortedCrabs(scoringMethod = "unorderedWithinTier") {
-  user.scoredEntries = [];
-
-  // get arrays of anime from the sorted elements
-  const rows = document.getElementsByClassName("tier-row");
-  for (const row of rows) {
-    // get relevant information and entries from row
-    var children = row.querySelector(".tier-sort").children;
-    var [lo, hi] = [parseInt(row.dataset.lo), parseInt(row.dataset.hi)];
-    var score = hi;
-
-    for (const child of children) {
-      // iterate through entries in row entry in list and assign score
-      const index = parseInt(child.id);
-      const entry = user.list[index];
-      entry.assignedScore = score;
-      user.scoredEntries.push(entry);
-      if (scoringMethod === "orderedWithinTier") {
-        score -= (hi - lo) / row.children.length;
-      }
-    }
-  }
-}
-
-// get list of entries with a difference (between lo and hi) between the user's given score and the tier list assigned score
-function findDifferenceBetween(lo, hi) {
-  const array = [];
-  for (const entry of user.scoredEntries) {
-    const diff =
-      entry.mediaListEntry.score != null
-        ? entry.assignedScore - entry.mediaListEntry.score
-        : 0;
-    if (Math.abs(diff) >= lo && Math.abs(diff) <= hi) {
-      array.push({ entry, diff });
-    }
-  }
-  return array;
-}
-
-// if the entry has a score already on anilist, remove it from consideration
-function hideScoredEntries() {
-  const crabs = document.getElementsByClassName("crab");
-  for (const crab of crabs) {
-    const index = parseInt(crab.id);
-    if (user.list[index].mediaListEntry.score != 0) {
-      crab.style.display = "none";
-    }
-  }
-}
-
-document.getElementById("b2").addEventListener("click", () => {
-  hideScoredEntries();
-});
-
-document.getElementById("b3").addEventListener("click", () => {
-  scoreSortedCrabs();
-  updateAllScores();
-});
-
-/*
- *  TO-DO LIST
- *  1. create interface for confirming score upload to anilist (score ranges should take place at THIS point)
- *  2. reorganize this mega-file into separate files
- *  3. improve initial starting experience / allow for no login
- */
+export {tierlist, bucket};

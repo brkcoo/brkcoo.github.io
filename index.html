@@ -13,27 +13,19 @@
   <body>
     <main>
       <h1>secrets to untold treasures lie within</h1>
-      <div class="button-container">
-        <a href="a.html" class="link-button"
-          ><img
-            src="https://img.pokemondb.net/sprites/black-white/anim/normal/wingull.gif"
-            alt="link 1"
-        /></a>
-        <a href="grid.html" class="link-button"
-          ><img
-            src="https://img.pokemondb.net/sprites/black-white/anim/normal/swablu.gif"
-            alt="link 2"
-        /></a>
-        <a href="tictactoe.html" class="link-button"
-          ><img
-            src="https://img.pokemondb.net/sprites/black-white/anim/normal/togekiss.gif"
-            alt="link 3"
-        /></a>
-        <a href="fish.html" class="link-button"
-          ><img
-            src="https://img.pokemondb.net/sprites/black-white/anim/normal/mantine.gif"
-            alt="link 4"
-        /></a>
+      <div class="link-button" style="left: 30%; top: 30%" data-href="a.html">
+        <img
+          src="https://img.pokemondb.net/sprites/black-white/anim/normal/wingull.gif"
+          alt="link 1"
+          style="width: 150px"
+        /><img class="popup-label" src="images/tier.png" />
+      </div>
+      <div class="link-button" style="left: 60%; top: 30%" data-href="tictactoe.html">
+        <img
+          src="https://img.pokemondb.net/sprites/black-white/anim/normal/togekiss.gif"
+          alt="link 3"
+          style="width: 150px"
+        /><img class="popup-label" src="images/ttt.png" />
       </div>
     </main>
   </body>
@@ -41,20 +33,9 @@
   <footer>hey man</footer>
 
   <script>
-    // randomizing button placements for fun
     const buttons = document.getElementsByClassName("link-button");
-    let i = 0;
-    sources = ["tier.png", "grid.png", "ttt.png", "fishing.png"];
     for (const el of buttons) {
-      el.style.top = `${Math.random() * 100}%`;
-      el.style.left = `${Math.random() * (33 * i) + 33 * i - 33}%`;
-      const popup = document.createElement("img");
-      popup.setAttribute("class", "popup-label");
-      popup.src = `images/${sources[i]}`;
-      popup.style.opacity = 0;
-
-      popup.style.bottom = `${Math.random() * 50 + 50}%`;
-      popup.style.left = `${Math.random() * 25 + 25}%`;
+      const popup = el.querySelector(".popup-label");
       el.addEventListener("mouseenter", () => {
         popup.style.opacity = 1;
       });
@@ -63,8 +44,39 @@
         popup.style.opacity = 0;
       });
 
-      el.append(popup);
-      i++;
+      const parent = el.parentElement;
+      const x = parent.clientWidth / 2 - el.offsetWidth / 2;
+      const y = parent.clientHeight / 2 + 100;
+
+      el.addEventListener(
+        "click",
+        () => {
+          let i = 0;
+          el.style.zIndex = 1000;
+          el.style.transform = `rotate(0deg)`;
+          el.style.transition = "left 1.5s, top 1.5s, transform .6s linear";
+          el.style.left = x + "px";
+          el.style.top = y + "px";
+          el.style.transform = `rotate(180deg)`;
+
+          const rotateHandler = (event) => {
+            if (event.propertyName === "transform") {
+              if (i === 0) {
+                el.style.transform = `rotate(360deg)`;
+              } else if (i === 1) {
+                el.style.transition = "top 1s, transform 1s linear";
+                el.style.transform = "translate(0,100%) scale(20)";
+              } else {
+                window.location.href = el.dataset.href;
+              }
+              i++;
+            }
+          };
+
+          el.addEventListener("transitionend", rotateHandler);
+        },
+        { once: true }
+      );
     }
   </script>
 </html>

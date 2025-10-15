@@ -1,57 +1,52 @@
-html,
 body {
-    background: url('https://64.media.tumblr.com/05e0937cc77c05f51b8c339ade1029c6/4cb2bbaf75739df2-47/s2048x3072_c0,24740,100000,100000/7157fa45dbf3543a0adeffd8dfd135be03dde7b8.png') no-repeat center center fixed;
-    background-size: cover;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    font-family: 'Comic Sans MS';
+  background: url("https://64.media.tumblr.com/05e0937cc77c05f51b8c339ade1029c6/4cb2bbaf75739df2-47/s2048x3072_c0,24740,100000,100000/7157fa45dbf3543a0adeffd8dfd135be03dde7b8.png")
+    no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: rgb(0, 0, 0);
 }
 
 main {
-    flex: 1;
-    padding: 20px;
-    text-align: center;
-    margin: 0
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 footer {
-    height: 15vh;
-    padding: 20px;
-    display: flex;
-    text-align: center;
-    justify-content: center;
+  height: 15vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
 }
 
-.button-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 50vh;
-    aspect-ratio: 1;
-}
 
 .link-button {
-    position: absolute;
-    height: 30%;
-    width: 30%;
-    cursor: pointer;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
+  position:absolute;
+  width: 150px;
+  height: 150px;
+  transition:  box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
-.link-button img {
-    width:100%;
-    object-fit: cover;
+.link-button:hover {
+  transform: scale(1.1);
 }
 
 .popup-label {
   position: absolute;
+  bottom: 100%;
+  left: 50%;
   transform: translateX(-50%);
+  width: 100px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s ease;
@@ -59,12 +54,12 @@ footer {
 }
 
 .grid-piece {
-    display: block;
-    height: 100vh;
-    width: 100vw;
+  display: block;
+  height: 100vh;
+  width: 100vw;
 }
 
 .grid-piece polygon {
-    stroke: rgb(96, 85, 224);
-    stroke-width: 2;
+  stroke: rgb(96, 85, 224);
+  stroke-width: 2;
 }
