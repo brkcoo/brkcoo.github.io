@@ -1,5 +1,8 @@
+import { getUserList } from "./a_anilist.js";
+import { initializeUser } from "./a_main.js";
+
 // intro pop up to get initial information, will probably be phased out
-export const introPopUp = ((user) => {
+export const introPopUp = (user) => {
   const popup = document.createElement("div");
   popup.setAttribute("class", "popup");
   document.querySelector("body").append(popup);
@@ -31,21 +34,26 @@ export const introPopUp = ((user) => {
   const message_2 = document.createElement("p");
   message_2.style.lineHeight = "1.5rem";
   message_2.style.margin = "0";
-  //content.append(message_2);
+  content.append(message_2);
 
   const form = document.createElement("div");
   form.setAttribute("class", "popup-form");
-  //content.append(form);
+  content.append(form);
 
   const input = document.createElement("input");
   input.setAttribute("class", "input-field");
   input.placeholder = "search for user";
-  //form.append(input);
+  form.append(input);
 
   const search = document.createElement("button");
   search.setAttribute("class", "search-button");
   search.innerText = "Go!";
-  //form.append(search);
+  form.append(search);
+
+  const message_3 = document.createElement("p");
+  message_3.style.lineHeight = "1.5rem";
+  message_3.style.margin = "0";
+  content.append(message_3);
 
   const confirm = document.createElement("button");
   confirm.setAttribute("class", "confirm-button");
@@ -59,17 +67,22 @@ export const introPopUp = ((user) => {
   message_2.innerText =
     "Alternatively, you can search for another user's to make a tier list out of";
 
+  var res, name;
   search.addEventListener("click", async () => {
-    const res = await getUserList(input.value);
+    name = input.value;
+    res = await getUserList(input.value);
     if (!res) {
-      console.log("erm");
+      message_3.innerText = "user not found";
     } else {
-      user.name = input.value;
+      message_3.innerText = `continue as ${name}?`;
       confirm.style.display = "block";
     }
   });
 
-  confirm.addEventListener("click", () => {});
+  confirm.addEventListener("click", () => {
+    initializeUser(res, name);
+    popup.remove();
+  });
 
   return { popup };
-});
+};

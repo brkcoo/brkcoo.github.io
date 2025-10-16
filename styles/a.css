@@ -6,11 +6,28 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
   background: #1e1e1e;
   color: #fff;
 }
 
+.button-holder-topbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 450px;
+  height: 100px;
+}
+
+.top-button {
+  margin: 10px;
+  width: 150px;
+  height: 50px;
+  background: #02a9ff;
+  cursor: pointer;
+}
+.top-button:hover {
+  background: #0285cc;
+}
 /* tier list stuff */
 #tier-wrapper {
   flex: 1;
@@ -48,7 +65,7 @@ body {
 .label {
   font-weight: bold;
   font-size: 1.2rem;
-  text-align:center;
+  text-align: center;
 }
 
 .tier-sort {
@@ -74,17 +91,17 @@ body {
 }
 
 .popup-close-button {
-  position:absolute;
-  width:25px;
-  height:25px;
-  left:calc(100% - 25px);
-  top:5px;
-  font-size:1.5em;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  left: calc(100% - 25px);
+  top: 5px;
+  font-size: 1.5em;
   color: gray;
-  cursor:pointer;
+  cursor: pointer;
 }
 .label-input-area {
-  width:150px;
+  width: 150px;
 }
 .move-up-button {
   height: 33%;
@@ -97,6 +114,7 @@ body {
 
 /* buckets and crabs */
 #bucket-container {
+  margin:20px;
   width: 50%;
 }
 
@@ -176,9 +194,8 @@ body {
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
   z-index: 2;
-  min-width: 600px;
-  max-width: 50%;
-  min-height: 400px;
+  width: 500px;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;

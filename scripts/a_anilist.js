@@ -1,13 +1,17 @@
 // make api request to anilist.co
 async function apiRequest(query, variables, token) {
   try {
+    // set up headers
+    var headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    }; // add token if possible
+    if (token) headers.Authorization = "Bearer " + token;
+    
+    // make request
     const response = await fetch("https://graphql.anilist.co", {
       method: "POST",
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: headers,
       body: JSON.stringify({
         query: query,
         variables: variables,
@@ -72,7 +76,7 @@ async function getUserList(userName, token) {
   };
 
   const res = await apiRequest(query, variables, token);
-  if (res.data == null) return false;
+  if (res.data.MediaListCollection == null) return null;
 
   let userlist = [];
   res.data.MediaListCollection.lists.forEach((list) => {
@@ -81,7 +85,6 @@ async function getUserList(userName, token) {
     });
   });
 
-  console.log(userlist);
   return userlist;
 }
 

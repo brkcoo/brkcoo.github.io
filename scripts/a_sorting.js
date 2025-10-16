@@ -1,9 +1,9 @@
-var selectedCrab; // for moving crabs between tiers and the bucket
+var selectedCrab; // for dragging crabs between tiers and the bucket
 
 // creates tier list and default tiers
 // includes row creation, row swapping, and row clearing
 // has functionality to serve as container for crabs
-const tierlist = (() => {
+const tierlist = () => {
   const body = document.querySelector("body");
 
   const wrapper = document.createElement("div");
@@ -23,16 +23,12 @@ const tierlist = (() => {
     "#b82929ff",
   ];
   const text = ["S", "A", "B", "C", "D"];
-  const his = [100, 90, 80, 70, 60];
-  const los = [90, 80, 70, 60, 0];
-  for (let i = 0; i < 5; i++) createRow(colors[i], text[i], i, los[i], his[i]);
+  for (let i = 0; i < 5; i++) createRow(colors[i], text[i], i);
 
-  function createRow(color, text, id, lo, hi) {
+  function createRow(color, text, id) {
     const row = document.createElement("div");
     row.setAttribute("class", "tier-row");
     row.setAttribute("data-id", id);
-    row.setAttribute("data-lo", lo);
-    row.setAttribute("data-hi", hi);
     container.append(row);
 
     const labelholder = document.createElement("div");
@@ -110,195 +106,132 @@ const tierlist = (() => {
     const y = children[iy];
 
     // swap values
-    const [a, b, c] = [x.dataset.id, x.dataset.lo, x.dataset.hi];
-
+    var temp = x.dataset.id;
     x.setAttribute("data-id", y.dataset.id);
-    x.setAttribute("data-lo", y.dataset.lo);
-    x.setAttribute("data-hi", y.dataset.hi);
-
-    y.setAttribute("data-id", a);
-    y.setAttribute("data-lo", b);
-    y.setAttribute("data-hi", c);
+    y.setAttribute("data-id", temp);
 
     // swap positions
     if (ix > iy) container.insertBefore(x, y);
     else container.insertBefore(y, x);
   }
 
-  return { createRow, clearRow };
-});
+  // creates an options popup for a row
+  // allows changing name/color, row clearing, row deletion, row creation above/below
+  function rowOptions(row) {
+    const popup = document.createElement("div");
+    popup.setAttribute("class", "popup");
+    document.querySelector("body").append(popup);
 
-// creates an options popup for a row
-// allows changing name/color, row clearing, row deletion, row creation above/below
-// TO BE REMOVED: lo/hi settings
-function rowOptions(row) {
-  const popup = document.createElement("div");
-  popup.setAttribute("class", "popup");
-  document.querySelector("body").append(popup);
+    const dim = document.createElement("div");
+    dim.setAttribute("class", "dim");
+    popup.append(dim);
 
-  const dim = document.createElement("div");
-  dim.setAttribute("class", "dim");
-  popup.append(dim);
+    const content = document.createElement("div");
+    content.setAttribute("class", "popup-content");
+    popup.append(content);
 
-  const content = document.createElement("div");
-  content.setAttribute("class", "popup-content");
-  popup.append(content);
+    const header = document.createElement("span");
+    header.setAttribute("class", "label");
+    header.innerText = "Row Options";
+    content.append(header);
 
-  const header = document.createElement("span");
-  header.setAttribute("class", "label");
-  header.innerText = "Row Options";
-  content.append(header);
+    const closeButton = document.createElement("div");
+    closeButton.setAttribute("class", "popup-close-button");
+    closeButton.innerText = "×";
+    content.append(closeButton);
 
-  const closeButton = document.createElement("div");
-  closeButton.setAttribute("class", "popup-close-button");
-  closeButton.innerText = "×";
-  content.append(closeButton);
+    // inputs
+    const form = document.createElement("form");
+    form.setAttribute("class", "options-form");
+    content.append(form);
 
-  // inputs
-  const form = document.createElement("form");
-  form.setAttribute("class", "options-form");
-  content.append(form);
+    const p1 = document.createElement("p");
+    p1.innerText = "row label";
+    form.append(p1);
 
-  const p1 = document.createElement("p");
-  p1.innerText = "row label";
-  form.append(p1);
+    const labelInput = document.createElement("input");
+    labelInput.setAttribute("class", "label-input-area");
+    labelInput.type = "name";
+    labelInput.maxLength = 100;
+    labelInput.value = row.querySelector(".label-holder .label").innerText;
+    labelInput.placeholder = "enter new label";
+    form.append(labelInput);
 
-  const labelInput = document.createElement("input");
-  labelInput.setAttribute("class", "label-input-area");
-  labelInput.type = "name";
-  labelInput.maxLength = 100;
-  labelInput.value = row.querySelector(".label-holder .label").innerText;
-  labelInput.placeholder = "enter new label";
-  form.append(labelInput);
-
-  const p2 = document.createElement("p");
-  p2.innerText = "score range";
-  form.append(p2);
-
-  const loInput = document.createElement("input");
-  loInput.setAttribute("class", "label-input-area");
-  loInput.type = "number";
-  loInput.step = 1;
-  loInput.min = 0;
-  loInput.max = 100;
-  loInput.placeholder = `${row.dataset.lo} (exclusive)`;
-  form.append(loInput);
-
-  const hiInput = document.createElement("input");
-  hiInput.setAttribute("class", "label-input-area");
-  hiInput.type = "number";
-  hiInput.step = 1;
-  hiInput.min = 0;
-  hiInput.max = 100;
-  hiInput.placeholder = `${row.dataset.hi} (inclusive)`;
-  form.append(hiInput);
-
-  // save and apply changes
-  function saveAndApply() {
-    if (labelInput.checkValidity() && labelInput.value.length > 0)
-      row.querySelector(".label-holder .label").innerText = labelInput.value;
-    let newLo =
-      loInput.checkValidity() && loInput.value !== ""
-        ? loInput.value
-        : row.dataset.lo;
-
-    let newHi =
-      hiInput.checkValidity() && hiInput.value !== ""
-        ? hiInput.value
-        : row.dataset.hi;
-
-    // fix order if necessary
-    if (parseInt(newLo) > parseInt(newHi)) {
-      let temp = newLo;
-      newLo = newHi;
-      newHi = temp;
+    // save and apply changes
+    function saveAndApply() {
+      if (labelInput.checkValidity() && labelInput.value.length > 0)
+        row.querySelector(".label-holder .label").innerText = labelInput.value;
+      // close
+      popup.remove();
     }
 
-    row.dataset.lo = newLo;
-    row.dataset.hi = newHi;
+    closeButton.addEventListener("click", () => {
+      saveAndApply();
+    });
+    dim.addEventListener("click", () => {
+      saveAndApply();
+    });
 
-    // close
-    popup.remove();
+    const buttonRow1 = document.createElement("div");
+    content.append(buttonRow1);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.innerText = "Delete Row";
+    deleteButton.addEventListener("click", () => {
+      const rows = row.parentNode.children;
+      if (rows.length === 1) return; // cant remove last row
+      const id = parseInt(row.dataset.id);
+      for (let i = id; i < rows.length; i++) {
+        rows[i].dataset.id = parseInt(rows[i].dataset.id) - 1;
+      }
+      clearRow(row);
+      row.remove();
+      popup.remove();
+    });
+    buttonRow1.append(deleteButton);
+
+    const clearButton = document.createElement("button");
+    clearButton.innerText = "Clear Row";
+    clearButton.addEventListener("click", () => {
+      clearRow(row);
+    });
+    buttonRow1.append(clearButton);
+
+    const buttonRow2 = document.createElement("div");
+    content.append(buttonRow2);
+
+    const createAbove = document.createElement("button");
+    createAbove.innerText = "Create Row Above";
+    createAbove.addEventListener("click", () => {
+      const rows = row.parentNode.children;
+      const id = parseInt(row.dataset.id);
+      for (let i = id; i < rows.length; i++) {
+        rows[i].dataset.id = parseInt(rows[i].dataset.id) + 1;
+      }
+      const newRow = createRow("#ff8800ff", "new", id);
+      row.parentNode.insertBefore(newRow, row);
+    });
+    buttonRow2.append(createAbove);
+
+    const createBelow = document.createElement("button");
+    createBelow.innerText = "Create Row Below";
+    createBelow.addEventListener("click", () => {
+      const rows = row.parentNode.children;
+      const id = parseInt(row.dataset.id);
+      for (let i = id + 1; i < rows.length; i++) {
+        rows[i].dataset.id = parseInt(rows[i].dataset.id) + 1;
+      }
+      const newRow = createRow("#ff8800ff", "new", id + 1);
+      row.parentNode.insertBefore(newRow, rows[id + 1]);
+    });
+    buttonRow2.append(createBelow);
   }
 
-  closeButton.addEventListener("click", () => {
-    saveAndApply();
-  });
-  dim.addEventListener("click", () => {
-    saveAndApply();
-  });
-
-  const buttonRow1 = document.createElement("div");
-  content.append(buttonRow1);
-
-  const deleteButton = document.createElement("button");
-  deleteButton.innerText = "Delete Row";
-  deleteButton.addEventListener("click", () => {
-    const rows = row.parentNode.children;
-    if (rows.length === 1) return; // cant remove last row
-    const id = parseInt(row.dataset.id);
-    for (let i = id; i < rows.length; i++) {
-      rows[i].dataset.id = parseInt(rows[i].dataset.id) - 1;
-    }
-    tierlist.clearRow(row);
-    row.remove();
-    popup.remove();
-  });
-  buttonRow1.append(deleteButton);
-
-  const clearButton = document.createElement("button");
-  clearButton.innerText = "Clear Row";
-  clearButton.addEventListener("click", () => {
-    tierlist.clearRow(row);
-  });
-  buttonRow1.append(clearButton);
-
-  const buttonRow2 = document.createElement("div");
-  content.append(buttonRow2);
-
-  const createAbove = document.createElement("button");
-  createAbove.innerText = "Create Row Above";
-  createAbove.addEventListener("click", () => {
-    const rows = row.parentNode.children;
-    const id = parseInt(row.dataset.id);
-    let lo, hi;
-    if (id === 0) {
-      hi = 100;
-    } else {
-      hi = row.parentNode.children[id - 1].dataset.lo;
-    }
-    lo = row.dataset.hi;
-    for (let i = id; i < rows.length; i++) {
-      rows[i].dataset.id = parseInt(rows[i].dataset.id) + 1;
-    }
-    const newRow = tierlist.createRow("#ff8800ff", "new", id, lo, hi);
-    row.parentNode.insertBefore(newRow, row);
-  });
-  buttonRow2.append(createAbove);
-
-  const createBelow = document.createElement("button");
-  createBelow.innerText = "Create Row Below";
-  createBelow.addEventListener("click", () => {
-    const rows = row.parentNode.children;
-    const id = parseInt(row.dataset.id);
-    let lo, hi;
-    if (id === rows.length - 1) {
-      lo = 0;
-    } else {
-      lo = row.parentNode.children[id + 1].dataset.hi;
-    }
-    hi = row.dataset.lo;
-    for (let i = id + 1; i < rows.length; i++) {
-      rows[i].dataset.id = parseInt(rows[i].dataset.id) + 1;
-    }
-    const newRow = tierlist.createRow("#ff8800ff", "new", id + 1, lo, hi);
-    row.parentNode.insertBefore(newRow, rows[id + 1]);
-  });
-  buttonRow2.append(createBelow);
-}
+  return { createRow, clearRow };
+};
 
 // create sortable anime entries and starting container for them
-const bucket = (() => {
+const bucket = () => {
   const body = document.querySelector("body");
 
   const container = document.createElement("div");
@@ -370,9 +303,9 @@ const bucket = (() => {
   }
 
   return { holder, createCrab };
-});
+};
 
-// is element b before element a?
+// is element b before element a? used for dragging
 function isBefore(a, b) {
   if (a.parentNode === b.parentNode) {
     for (var cur = a; cur; cur = cur.previousSibling) {
@@ -382,4 +315,4 @@ function isBefore(a, b) {
   return false;
 }
 
-export {tierlist, bucket};
+export { tierlist, bucket };

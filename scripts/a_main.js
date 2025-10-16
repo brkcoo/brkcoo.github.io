@@ -1,25 +1,20 @@
+import html2canvas from "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm";
 import { introPopUp } from "./a_intro.js";
-import { tierlist, bucket } from "./a_sorting.js";
-import {
-  getUserInfoWithToken,
-  getUserList,
-  updateScores,
-} from "./a_anilist.js";
+import { tierlist as tl, bucket as bckt } from "./a_sorting.js";
+import { getUserInfoWithToken, getUserList } from "./a_anilist.js";
 
 const user = {
   name: null,
   avatar: null,
   list: [],
-  scoredEntries: [],
   hidden: [],
   token: null,
 };
 
-const tl = tierlist();
-const bckt = bucket();
+const tierlist = tl();
+const bucket = bckt();
 
-// using this until i add functionality for ranking other users lists
-const tempUserSetup = (async () => {
+const checkToken = (async () => {
   // get access token from url (if already authenticated)
   const hash = window.location.hash.substring(1);
   const urlParams = new URLSearchParams(hash);
@@ -29,96 +24,37 @@ const tempUserSetup = (async () => {
     return;
   }
   user.token = token;
+
   // get user info from token and save
   [user.name, user.avatar] = await getUserInfoWithToken(user.token);
-  document.getElementById("user-avatar").src = user.avatar;
-  document.getElementById("user-name").innerText = user.name;
 
+  // display login required feature
+  document.getElementById("checkbox-div").style.display = "block";
+
+  // grab list
   user.list = await getUserList(user.name, token);
 
-  for (let i = 0; i < user.list.length; i++) bckt.createCrab(i, user.list[i]);
+  // go!
+  initializeUser();
 })();
 
-// update anilist scores for all tiered entries
-// requires that the entries have been scored by scoreSortedCrabs()
-function updateAllScores() {
-  if (user.token == null) {
-    alert("no token found, please login to anilist");
-    return;
-  }
+export function initializeUser(list, name) {
+  if (name) user.name = name;
+  if (list) user.list = list;
 
-  if (user.scoredEntries.length == 0) return; // empty tier list
+  // avatar accompanying name at the top (if logged in)
+  const ava = document.getElementById("user-avatar");
+  if (user.avatar) ava.src = user.avatar;
+  else ava.remove();
 
-  var curScore;
-  var idArray = [];
-  curScore = user.scoredEntries[0].assignedScore;
-  for (const entry of user.scoredEntries) {
-    if (curScore != entry.assignedScore) {
-      // new score, process previous entries
-      updateScores(user.token, idArray, curScore);
-      curScore = entry.assignedScore;
-      idArray = [];
-    }
-    if (entry.assignedScore === entry.mediaListEntry.score) continue; // no change to existing score
-    idArray.push(entry.mediaListEntry.id);
-  }
-  updateScores(user.token, idArray, curScore); // handle final batch
-}
+  document.getElementById("user-name").innerText = `${user.name}'s list`;
 
-// set anilist scores to 0 for any entry that wasn't in the tier list
-function resetUntieredEntryScores() {
-  if (user.token == null) {
-    alert("no token found, please login to anilist");
-    return;
-  }
+  // give warning that tier list progress and whatnot will NOT be saved upon leaving/refresh
+  window.onbeforeunload = function () {
+    return "progress will reset";
+  };
 
-  var idArray = [];
-  for (const entry of user.list) {
-    if (entry.assignedScore == null) {
-      idArray.push(entry.mediaListEntry.id);
-    }
-  }
-  updateScores(user.token, idArray, 0);
-}
-
-// assign scores to the sorted entries
-function scoreSortedCrabs(scoringMethod = "unorderedWithinTier") {
-  user.scoredEntries = [];
-
-  // get arrays of anime from the sorted elements
-  const rows = document.getElementsByClassName("tier-row");
-  for (const row of rows) {
-    // get relevant information and entries from row
-    var children = row.querySelector(".tier-sort").children;
-    var [lo, hi] = [parseInt(row.dataset.lo), parseInt(row.dataset.hi)];
-    var score = hi;
-
-    for (const child of children) {
-      // iterate through entries in row entry in list and assign score
-      const index = parseInt(child.id);
-      const entry = user.list[index];
-      entry.assignedScore = score;
-      user.scoredEntries.push(entry);
-      if (scoringMethod === "orderedWithinTier") {
-        score -= (hi - lo) / row.children.length;
-      }
-    }
-  }
-}
-
-// get list of entries with a difference (between lo and hi) between the user's given score and the tier list assigned score
-function findDifferenceBetween(lo, hi) {
-  const array = [];
-  for (const entry of user.scoredEntries) {
-    const diff =
-      entry.mediaListEntry.score != null
-        ? entry.assignedScore - entry.mediaListEntry.score
-        : 0;
-    if (Math.abs(diff) >= lo && Math.abs(diff) <= hi) {
-      array.push({ entry, diff });
-    }
-  }
-  return array;
+  for (let i = 0; i < user.list.length; i++) bucket.createCrab(i, user.list[i]);
 }
 
 // if the entry has a score already on anilist, remove it from consideration
@@ -132,7 +68,11 @@ function hideScoredEntries() {
     const index = parseInt(crab.id);
     if (user.list[index].mediaListEntry.score != 0) {
       // save info for later readdition
-      user.hidden.push({ entry: user.list[index], crab: crab, parent: crab.parentNode });
+      user.hidden.push({
+        entry: user.list[index],
+        crab: crab,
+        parent: crab.parentNode,
+      });
       removalQueue.push(crab);
     }
   }
@@ -148,22 +88,52 @@ function hideScoredEntries() {
 function showHiddenEntries() {
   while (user.hidden.length > 0) {
     const item = user.hidden.pop();
-    if(parent != null) // if parent exists to readd crab
+    if (parent != null)
+      // if parent exists to readd crab
       item.parent.append(item.crab);
-    else // if previous tier has been deleted for whatever reason
-      bckt.holder.append(item.crab);
+    // if previous tier has been deleted for whatever reason
+    else bucket.holder.append(item.crab);
   }
 }
 
+// export the list as a jpeg -- using html2canvas
+async function saveListAsImage() {
+  const el = document.getElementById("tier-wrapper");
+
+  // convert element to canvas with html2canvas
+  const canvas = await html2canvas(el, {
+    scale: 3, 
+    useCORS: true, 
+    allowTaint: false, 
+    backgroundColor: null,
+  });
+
+  // download canvas
+  canvas.toBlob(
+    (blob) => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "list-export.jpeg";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    },
+    "image/jpeg",
+    0.92
+  );
+}
+
 document.getElementById("hide-show-entries").addEventListener("click", (e) => {
-  if(e.target.checked)
-    hideScoredEntries();
-  else
-    showHiddenEntries();
+  if (e.target.checked) hideScoredEntries();
+  else showHiddenEntries();
+});
+
+document.getElementById("share-list-button").addEventListener("click", (e) => {
+  saveListAsImage();
 });
 
 /*
  *  TO-DO LIST
  *  1. create interface for confirming score upload to anilist (score ranges should take place at THIS point)
- *  2. improve initial starting experience / allow for no login
  */

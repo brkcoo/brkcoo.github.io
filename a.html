@@ -8,12 +8,16 @@
     <link rel="icon" type="image/png" href="favicon.ico" />
   </head>
   <body>
-    <div>
-      <input type="checkbox" id="hide-show-entries">
-      <label for="hide-show-entries">Hide scored entries</label>
+    <div class="button-holder-topbar">
+      <div id="checkbox-div" class="top-button" style="display: none">
+        <input type="checkbox" id="hide-show-entries" />
+        <label for="hide-show-entries">Hide scored entries</label>
+      </div>
+      <button id="share-list-button" class="top-button">save tierlist as image</button>
+      <button id="submit-scores-button" class="top-button">upload scores (doesnt work yet)</button>
     </div>
-    <div>
-      <img id="user-avatar" style="width:50px">
+    <div style="padding: 10px">
+      <img id="user-avatar" style="width: 50px" />
       <span id="user-name"></span>
     </div>
   </body>
