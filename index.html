@@ -11,38 +11,62 @@
   </head>
 
   <body>
-    <main>
-      <h1>secrets to untold treasures lie within</h1>
-      <a class="link-button" style="left: 30%; top: 30%" href="a.html">
+    <div class="container">
+      <div class="sidebar">
         <img
-          src="https://img.pokemondb.net/sprites/black-white/anim/normal/wingull.gif"
-          alt="link 1"
-          style="width: 150px"
-        /><img class="popup-label" src="images/tier.png" />
-      </a>
-      <a class="link-button" style="left: 60%; top: 30%" href="tictactoe.html">
-        <img
-          src="https://img.pokemondb.net/sprites/black-white/anim/normal/togekiss.gif"
-          alt="link 3"
-          style="width: 150px"
-        /><img class="popup-label" src="images/ttt.png" />
-      </a>
-    </main>
+          src="images/navbar.png"
+          style="width: 256px; margin-top: 1000px 0"
+        />
+        <div class="sidebar-links">
+          <a href="tierlist.html"></a>
+          <a href="tictactoe.html"></a>
+          <a href="https://google.com"></a>
+        </div>
+      </div>
+
+      <div class="content">
+        <main class="main-home">
+          <div class="announcement">
+            <div class="scrolling">
+              <span
+                >LIMITED-TIME OFFER: Free UNLIMITED access to
+                <a href="https://brkcoo.github.io">brkcoo.github.io</a>
+                &nbsp;&nbsp;&nbsp;★ ★&nbsp;&nbsp;&nbsp;An inch of time is worth
+                an inch of gold, but an inch of gold cannot buy an inch of
+                time&nbsp;&nbsp;&nbsp;★ ★&nbsp;&nbsp;&nbsp; Did You Know? "The
+                most common call of an American crow is the CaaW!-CaaW!-CaaW!"
+                &nbsp;&nbsp;&nbsp;★ ★ &nbsp;&nbsp;&nbsp;Learn more on
+                <a href="https://en.wikipedia.org/wiki/American_crow"
+                  >wikipedia.org</a
+                >
+                &nbsp;&nbsp;&nbsp;★ ★ &nbsp;&nbsp;&nbsp;BREAKING NEWS! Jupiter
+                expected to be in retrograde for the first time in over 75
+                years. Do you want to know more? &nbsp;&nbsp;&nbsp;★
+                ★&nbsp;&nbsp;&nbsp;</span
+              >
+              <span
+                >LIMITED-TIME OFFER: Free UNLIMITED access to
+                <a href="https://brkcoo.github.io">brkcoo.github.io</a>
+                &nbsp;&nbsp;&nbsp;★ ★&nbsp;&nbsp;&nbsp;An inch of time is worth
+                an inch of gold, but an inch of gold cannot buy an inch of
+                time&nbsp;&nbsp;&nbsp;★ ★&nbsp;&nbsp;&nbsp; Did You Know? "The
+                most common call of an American crow is the CaaW!-CaaW!-CaaW!"
+                &nbsp;&nbsp;&nbsp;★ ★ &nbsp;&nbsp;&nbsp;Learn more on
+                <a href="https://en.wikipedia.org/wiki/American_crow"
+                  >wikipedia.org</a
+                >
+                &nbsp;&nbsp;&nbsp;★ ★ &nbsp;&nbsp;&nbsp;BREAKING NEWS! Jupiter
+                expected to be in retrograde for the first time in over 75
+                years. Do you want to know more? &nbsp;&nbsp;&nbsp;★
+                ★&nbsp;&nbsp;&nbsp;</span
+              >
+            </div>
+          </div>
+          <img src="images/brkcoo.png" />
+          <h1>eventually, more things will go here.</h1>
+        </main>
+        <footer class="footer">hey man</footer>
+      </div>
+    </div>
   </body>
-
-  <footer>hey man</footer>
-
-  <script>
-    const buttons = document.getElementsByClassName("link-button");
-    for (const el of buttons) {
-      const popup = el.querySelector(".popup-label");
-      el.addEventListener("mouseenter", () => {
-        popup.style.opacity = 1;
-      });
-
-      el.addEventListener("mouseleave", () => {
-        popup.style.opacity = 0;
-      });
-    }
-  </script>
 </html>

@@ -2,64 +2,94 @@ body {
   background: url("https://64.media.tumblr.com/05e0937cc77c05f51b8c339ade1029c6/4cb2bbaf75739df2-47/s2048x3072_c0,24740,100000,100000/7157fa45dbf3543a0adeffd8dfd135be03dde7b8.png")
     no-repeat center center fixed;
   background-size: cover;
+
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: justify;
+  font-family: "Comic Sans MS";
+  color: rgb(0, 0, 0);
+
   margin: 0;
   padding: 0;
-  font-family: "Comic Sans MS", cursive, sans-serif;
-  min-height: 100vh;
+}
+
+.container {
   display: flex;
-  flex-direction: column;
-  color: rgb(0, 0, 0);
+  width: 1024px;
+  margin: 0 auto;
+  font-weight: bold;
 }
 
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-footer {
-  height: 15vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 10px;
-}
-
-
-.link-button {
-  position:absolute;
-  width: 150px;
-  height: 150px;
-  transition:  box-shadow 0.2s ease;
-  cursor: pointer;
-}
-
-.link-button:hover {
-  transform: scale(1.1);
-}
-
-.popup-label {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-  z-index: 1;
-}
-
-.grid-piece {
-  display: block;
+.sidebar {
+  width: 256px;
   height: 100vh;
-  width: 100vw;
+  min-height: 800px;
+  background-image: url("/images/checkers.png");
+  flex-shrink: 0;
 }
 
-.grid-piece polygon {
-  stroke: rgb(96, 85, 224);
-  stroke-width: 2;
+.content {
+  text-align: center;
+  width: 768px;
+  background-image: url("/images/bg.png");
+}
+
+.footer {
+  width: 680px;
+  text-align: center;
+  margin: 90px auto 0;
+}
+
+.announcement {
+  background: #222;
+  color: white;
+  padding: 0.3em 0;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 30px;
+}
+
+.scrolling {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-left 60s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.sidebar-links a {
+  display: block;
+  width: 256px;
+  height: 128px;
+  background-size: cover;
+  margin: 10px 0;
+}
+
+.sidebar-links a:nth-child(1) {
+  background-image: url("../images/button-tier.png");
+}
+.sidebar-links a:nth-child(2) {
+  background-image: url("../images/button-ttt.png");
+}
+.sidebar-links a:nth-child(3) {
+  background-image: url("../images/button-other.png");
+}
+.sidebar-links a:nth-child(1):hover {
+  background-image: url("../images/hover-tier.gif");
+}
+.sidebar-links a:nth-child(2):hover {
+  background-image: url("../images/hover-ttt.gif");
+}
+.sidebar-links a:nth-child(3):hover {
+  background-image: url("../images/hover-other.gif");
 }
