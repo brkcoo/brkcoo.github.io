@@ -48,8 +48,34 @@ body {
   color: white;
   padding: 0.3em 0;
   overflow: hidden;
-  white-space: nowrap;
   margin-top: 30px;
+}
+
+.scrolling-inner {
+  display: flex;
+  white-space: nowrap;
+}
+
+.scrolling-text {
+  display: flex;
+}
+
+.scrolling-item {
+  padding: 0 30px;
+}
+
+.scrolling-inner > div {
+  animation: scroll-left 60s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .sidebar-links a {
