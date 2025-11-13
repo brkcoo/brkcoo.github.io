@@ -1,4 +1,4 @@
-import { getUserList } from "./a_anilist.js";
+import { getMostPopular, getUserList } from "./a_anilist.js";
 import { initializeUser } from "./a_main.js";
 
 // intro pop up to get initial information, will probably be phased out
@@ -36,6 +36,18 @@ export const introPopUp = (user) => {
   message_2.style.margin = "0";
   content.append(message_2);
 
+  // button to use anilist top 100 instead of a users list
+  const useTopButton = document.createElement("div");
+  useTopButton.setAttribute("class", "anilist-button");
+  useTopButton.innerText = "Use Top 100";
+  content.append(useTopButton);
+  useTopButton.addEventListener("click", async () => {
+    const res = await getMostPopular();
+    initializeUser(res, "Anilist Top 100");
+    popup.remove();
+  });
+
+  // search for user form
   const form = document.createElement("div");
   form.setAttribute("class", "popup-form");
   content.append(form);
@@ -65,7 +77,7 @@ export const introPopUp = (user) => {
   message.innerText =
     "Please login with Anilist to make a tier list of your own anime list and update scores to your account.";
   message_2.innerText =
-    "Alternatively, you can search for another user's to make a tier list out of";
+    "Alternatively, you can search for another user's to make a tier list out of, or just use Anilist's top 100 most popular shows!";
 
   var res, name;
   search.addEventListener("click", async () => {

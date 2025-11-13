@@ -7,7 +7,7 @@ async function apiRequest(query, variables, token) {
       Accept: "application/json",
     }; // add token if possible
     if (token) headers.Authorization = "Bearer " + token;
-    
+
     // make request
     const response = await fetch("https://graphql.anilist.co", {
       method: "POST",
@@ -108,4 +108,36 @@ function updateScores(token, ids, score) {
   return apiRequest(mutation, variables, token);
 }
 
-export { getUserInfoWithToken, getUserList, updateScores };
+async function getMostPopular() {
+  const query = `      
+    query($page: Int) {
+      Page(page: $page) {
+        media(type: ANIME, sort: POPULARITY_DESC) {
+          title {
+              romaji
+              english
+          }
+          coverImage{
+              medium
+          }
+          startDate {
+              year     			
+          } 
+          mediaListEntry {
+            id
+            createdAt
+            score (format:POINT_100)
+          }
+        }
+      }
+    }
+`;
+
+  const res = await apiRequest(query, { page: 1 });
+  const resNext = await apiRequest(query, { page: 2 });
+
+  let list = Array.from(res.data.Page.media);
+  return list.concat(Array.from(resNext.data.Page.media));
+}
+
+export { getUserInfoWithToken, getUserList, updateScores, getMostPopular };

@@ -118,6 +118,7 @@ const tierlist = () => {
   // creates an options popup for a row
   // allows changing name/color, row clearing, row deletion, row creation above/below
   function rowOptions(row) {
+    // popup
     const popup = document.createElement("div");
     popup.setAttribute("class", "popup");
     document.querySelector("body").append(popup);
@@ -145,36 +146,24 @@ const tierlist = () => {
     form.setAttribute("class", "options-form");
     content.append(form);
 
-    const p1 = document.createElement("p");
-    p1.innerText = "row label";
+    const p1 = document.createElement("label");
+    p1.for = "rowname";
+    p1.innerText = "tier label";
     form.append(p1);
 
     const labelInput = document.createElement("input");
     labelInput.setAttribute("class", "label-input-area");
     labelInput.type = "name";
+    labelInput.name = "rowname";
     labelInput.maxLength = 100;
     labelInput.value = row.querySelector(".label-holder .label").innerText;
     labelInput.placeholder = "enter new label";
     form.append(labelInput);
 
-    // save and apply changes
-    function saveAndApply() {
-      if (labelInput.checkValidity() && labelInput.value.length > 0)
-        row.querySelector(".label-holder .label").innerText = labelInput.value;
-      // close
-      popup.remove();
-    }
-
-    closeButton.addEventListener("click", () => {
-      saveAndApply();
-    });
-    dim.addEventListener("click", () => {
-      saveAndApply();
-    });
-
     const buttonRow1 = document.createElement("div");
     content.append(buttonRow1);
 
+    // delete row
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete Row";
     deleteButton.addEventListener("click", () => {
@@ -190,6 +179,7 @@ const tierlist = () => {
     });
     buttonRow1.append(deleteButton);
 
+    // empty row's entries
     const clearButton = document.createElement("button");
     clearButton.innerText = "Clear Row";
     clearButton.addEventListener("click", () => {
@@ -200,6 +190,7 @@ const tierlist = () => {
     const buttonRow2 = document.createElement("div");
     content.append(buttonRow2);
 
+    // create row above this one
     const createAbove = document.createElement("button");
     createAbove.innerText = "Create Row Above";
     createAbove.addEventListener("click", () => {
@@ -213,6 +204,7 @@ const tierlist = () => {
     });
     buttonRow2.append(createAbove);
 
+    // create row below this one
     const createBelow = document.createElement("button");
     createBelow.innerText = "Create Row Below";
     createBelow.addEventListener("click", () => {
@@ -225,6 +217,63 @@ const tierlist = () => {
       row.parentNode.insertBefore(newRow, rows[id + 1]);
     });
     buttonRow2.append(createBelow);
+
+    // color selector;
+    const p2 = document.createElement("label");
+    p2.for = "rowcolor";
+    p2.innerText = "tier color";
+    form.append(p2);
+
+    const colorSelector = document.createElement("input");
+    colorSelector.type = "color";
+    colorSelector.name = "rowcolor";
+    colorSelector.value =
+      row.querySelector(".label-holder").style.backgroundColor;
+    form.appendChild(colorSelector);
+
+    const colorSelectOptions = document.createElement("div");
+    colorSelectOptions.setAttribute("class", "color-select-options");
+    form.appendChild(colorSelectOptions);
+
+    const defaultColors = [
+      "#000000", // black
+      "#7f8c8d", // medium gray
+      "#e74c3c", // red
+      "#e67e22", // orange
+      "#f1c40f", // yellow
+      "#2ecc71", // green
+      "#1abc9c", // teal
+      "#3498db", // blue
+      "#9b59b6", // purple
+      "#ff5fd7ff", // pink
+    ];
+    for (let i = 0; i < defaultColors.length; i++) {
+      const colorChoice = document.createElement("span");
+      colorChoice.style.background = defaultColors[i];
+      colorChoice.setAttribute("class", "color-choice");
+      colorChoice.addEventListener("click", () => {
+        colorSelector.value = defaultColors[i];
+      });
+      colorSelectOptions.append(colorChoice);
+    }
+
+    // save and apply changes
+    function saveAndApply() {
+      let labelholder = row.querySelector(".label-holder");
+      if (labelInput.checkValidity() && labelInput.value.length > 0) {
+        labelholder.querySelector(".label").innerText = labelInput.value;
+        labelholder.style.backgroundColor = colorSelector.value;
+      }
+      // close
+      popup.remove();
+    }
+
+    closeButton.addEventListener("click", () => {
+      saveAndApply();
+    });
+    dim.addEventListener("click", () => {
+      saveAndApply();
+    });
   }
 
   return { createRow, clearRow };

@@ -29,7 +29,7 @@ const checkToken = (async () => {
   [user.name, user.avatar] = await getUserInfoWithToken(user.token);
 
   // display login required feature
-  document.getElementById("checkbox-div").style.display = "block";
+  document.getElementById("hide-show-entries").style.display = "block";
 
   // grab list
   user.list = await getUserList(user.name, token);
@@ -50,9 +50,9 @@ export function initializeUser(list, name) {
   document.getElementById("user-name").innerText = `${user.name}'s list`;
 
   // give warning that tier list progress and whatnot will NOT be saved upon leaving/refresh
-  window.onbeforeunload = function () {
-    return "progress will reset";
-  };
+  // window.onbeforeunload = function () {
+  //   return "progress will reset";
+  // };
 
   for (let i = 0; i < user.list.length; i++) bucket.createCrab(i, user.list[i]);
 }
@@ -102,9 +102,9 @@ async function saveListAsImage() {
 
   // convert element to canvas with html2canvas
   const canvas = await html2canvas(el, {
-    scale: 3, 
-    useCORS: true, 
-    allowTaint: false, 
+    scale: 3,
+    useCORS: true,
+    allowTaint: false,
     backgroundColor: null,
   });
 
@@ -124,16 +124,19 @@ async function saveListAsImage() {
   );
 }
 
-document.getElementById("hide-show-entries").addEventListener("click", (e) => {
-  if (e.target.checked) hideScoredEntries();
-  else showHiddenEntries();
+// top buttons
+document.getElementById("hide-show-entries").addEventListener("click", () => {
+  const thisEle = document.getElementById("hide-show-entries");
+  if (user.hidden.length > 0) {
+    showHiddenEntries();
+    thisEle.innerText = "hide scored entries";
+    document.createProcessingInstruction
+  } else {
+    hideScoredEntries();
+    thisEle.innerText = "show hidden entries";
+  }
 });
 
-document.getElementById("share-list-button").addEventListener("click", (e) => {
+document.getElementById("share-list-button").addEventListener("click", () => {
   saveListAsImage();
 });
-
-/*
- *  TO-DO LIST
- *  1. create interface for confirming score upload to anilist (score ranges should take place at THIS point)
- */

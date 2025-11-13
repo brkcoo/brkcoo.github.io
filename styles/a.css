@@ -79,6 +79,12 @@ body {
   padding: 0 10px;
 }
 
+.options-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+}
 .options-container {
   position: absolute;
   left: 100%;
@@ -114,7 +120,7 @@ body {
 
 /* buckets and crabs */
 #bucket-container {
-  margin:20px;
+  margin: 20px;
   width: 50%;
 }
 
@@ -263,4 +269,28 @@ body {
 }
 .anilist-button:hover {
   background: #0285cc;
+}
+
+/* color optinos */
+.color-select-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.color-choice {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid #ccc;
+}
+
+.color-choice:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
