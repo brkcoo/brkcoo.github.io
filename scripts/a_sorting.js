@@ -335,6 +335,7 @@ const bucket = () => {
 
     crab.addEventListener("dragstart", (e) => {
       selectedCrab = e.target;
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
     });
 
     crab.addEventListener("dragenter", (e) => {
