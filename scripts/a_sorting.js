@@ -348,6 +348,7 @@ const bucket = () => {
     crab.addEventListener("dragend", (e) => {
       crab.style.transform = "scale(1)";
       crab.style.opacity = "100%";
+      tooltip.style.opacity = 0;
       selectedCrab = null;
     });
   }
