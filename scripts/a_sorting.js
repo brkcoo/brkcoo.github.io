@@ -1,4 +1,5 @@
 var selectedCrab; // for dragging crabs between tiers and the bucket
+var tempCrab;
 
 // creates tier list and default tiers
 // includes row creation, row swapping, and row clearing
@@ -44,14 +45,11 @@ const tierlist = () => {
 
     const sortable = document.createElement("div");
     sortable.setAttribute("class", "tier-sort");
-    sortable.addEventListener("dragenter", (e) => {
-      e.preventDefault();
+    sortable.addEventListener("pointerenter", (e) => {
+      if(!selectedCrab) return;
       if (selectedCrab.parentNode != sortable) {
         sortable.appendChild(selectedCrab);
       }
-    });
-    sortable.addEventListener("dragover", (e) => {
-      e.preventDefault();
     });
     row.append(sortable);
 
@@ -291,21 +289,19 @@ const bucket = () => {
   holder.setAttribute("id", "bucket-holder");
   container.append(holder);
 
-  holder.addEventListener("dragenter", (e) => {
+  holder.addEventListener("pointerenter", (e) => {
+    if (!selectedCrab) return;
     e.preventDefault();
     if (selectedCrab.parentNode != holder) {
       holder.appendChild(selectedCrab);
     }
   });
-  holder.addEventListener("dragover", (e) => {
-    e.preventDefault();
-  });
 
   function createCrab(num, entry) {
     const crab = document.createElement("div");
     crab.setAttribute("id", num);
-    crab.setAttribute("class", "crab");
-    crab.setAttribute("draggable", true);
+    crab.setAttribute("class", "crab real");
+    crab.style.zIndex = 235834524;
     crab.style.backgroundImage = `url("${entry.coverImage.medium}")`;
     holder.append(crab);
 
@@ -314,47 +310,76 @@ const bucket = () => {
     tooltip.innerText = `${entry.title.romaji} (${entry.startDate.year})`;
     crab.append(tooltip);
 
-    crab.addEventListener("mouseenter", () => {
-      tooltip.style.opacity = 1;
-    });
-
-    crab.addEventListener("mousedown", () => {
-      crab.style.transform = "scale(0.95)";
-      crab.style.opacity = "50%";
-      tooltip.style.opacity = 0;
-    });
-
-    crab.addEventListener("mouseleave", () => {
-      tooltip.style.opacity = 0;
-    });
-
-    crab.addEventListener("mouseup", (e) => {
-      crab.style.transform = "scale(1)";
-      crab.style.opacity = "100%";
-    });
-
-    crab.addEventListener("dragstart", (e) => {
-      selectedCrab = e.target;
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-    });
-
-    crab.addEventListener("dragenter", (e) => {
+    crab.addEventListener("pointerenter", (e) => {
+      if (!selectedCrab) return;
       e.preventDefault();
+
       if (isBefore(selectedCrab, e.target))
         e.target.parentNode.insertBefore(selectedCrab, e.target);
       else e.target.parentNode.insertBefore(selectedCrab, e.target.nextSibling);
     });
 
-    crab.addEventListener("dragend", (e) => {
-      crab.style.transform = "scale(1)";
-      crab.style.opacity = "100%";
+    crab.addEventListener("mouseenter", () => {
+      tooltip.style.opacity = 1;
+    });
+
+    crab.addEventListener("mouseleave", () => {
       tooltip.style.opacity = 0;
-      selectedCrab = null;
     });
   }
 
   return { holder, createCrab };
 };
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.target.getAttribute("class") != "crab real") return;
+  e.preventDefault();
+
+  selectedCrab = e.target;
+  //selectedCrab.setPointerCapture(e.pointerId);
+
+  tempCrab = selectedCrab.cloneNode(true);
+  tempCrab.setAttribute("class", "crab fake");
+  tempCrab.querySelector(".tooltip").style.display = "none";
+  tempCrab.style.pointerEvents = "none";
+  selectedCrab.style.transform = "scale(0.95)";
+  selectedCrab.style.opacity = "50%";
+
+  // position
+  tempCrab.style.position = "fixed";
+  tempCrab.style.left = "0";
+  tempCrab.style.top = "0";
+  tempCrab.style.transform =
+    `translate(${e.clientX - tempCrab.offsetWidth / 2}px,
+                   ${e.clientY - tempCrab.offsetHeight / 2}px)`;
+
+  document.body.appendChild(tempCrab);
+});
+
+document.addEventListener("pointermove", (e) => {
+  if (!tempCrab) return;
+
+  tempCrab.style.left = "0";
+  tempCrab.style.top = "0";
+  tempCrab.style.transform =
+    `translate(${e.clientX - tempCrab.offsetWidth / 2}px,
+                   ${e.clientY - tempCrab.offsetHeight / 2}px)`;
+});
+
+document.addEventListener("pointerup", (e) => {
+  if (!tempCrab) return;
+  //selectedCrab.releasePointerCapture(e.pointerId);
+
+  selectedCrab.style.transform = "scale(1)";
+  selectedCrab.style.opacity = "100%";
+  selectedCrab.querySelector(".tooltip").style.opacity = 0;
+  selectedCrab.querySelector(".tooltip").style.display = "block";
+
+  tempCrab.remove();
+
+  selectedCrab = null;
+  tempCrab = null;
+});
 
 // is element b before element a? used for dragging
 function isBefore(a, b) {
@@ -367,3 +392,4 @@ function isBefore(a, b) {
 }
 
 export { tierlist, bucket };
+

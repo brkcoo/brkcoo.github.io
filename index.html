@@ -1,70 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>helo bird</title>
+    <title>brkcoo</title>
+    <link rel="stylesheet" href="styles/home.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script src="scripts/index.js" defer></script>
     <script src="scripts/cursor.js"></script>
     <script src="scripts/chat.js" defer></script>
-    <link rel="stylesheet" type="text/css" href="styles/styles.css" />
-    <link rel="icon" type="image/png" href="favicon.ico" />
   </head>
-
   <body>
-    <div class="container">
-      <div class="sidebar">
-        <img
-          src="images/navbar.png"
-          style="width: 256px; margin-top: 1000px 0"
-        />
-        <div class="sidebar-links">
-          <a href="a.html"></a>
-          <a href="tictactoe.html"></a>
-          <a href="https://google.com"></a>
+    <div id="wrapper">
+      <div id="header">
+        <img src="images/brkcoo.png" />
+        <h1>website</h1>
+      </div>
+
+      <div id="navbar">
+        <a href="/">Home</a>
+        <a href="/tierlist.html">Tier List</a>
+        <a href="/map.html">Map Maker</a>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div id="content">
+        <div id="sidebar">
+          <h3>Navigation</h3>
+
+          <ul>
+            <li><a href="#">These links</a></li>
+            <li><a href="#">don't currently</a></li>
+            <li><a href="#">go anywhere.</a></li>
+            <li><a href="#">Stay tuned for more.</a></li>
+            <li><a href="images/fish/basculin.jpg">Fish</a></li>
+          </ul>
+
+          <hr />
+
+          <h3>Updates</h3>
+
+          <p>✔ Grand Opening!</p>
+          <p>✔ Lots of things happening!</p>
+
+          <hr />
+
+          <p><strong>Visitors:</strong></p>
+          <div id="visitor-count" class="counter"></div>
+        </div>
+
+        <div id="main">
+          <div class="marquee">
+            <ul class="marquee__content">
+              <li>We've had decent weather lately.</li>
+              <li>Sharks have been spotted lately. Be careful!</li>
+              <li>What do you call a fish with no eyes? Fsh.</li>
+            </ul>
+            <ul class="marquee__content" aria-hidden="true">
+              <li>We've had decent weather lately.</li>
+              <li>Sharks have been spotted lately. Be careful!</li>
+              <li>What do you call a fish with no eyes? Fsh.</li>
+            </ul>
+          </div>
+          <h2>Welcome!</h2>
+
+          <div id="mascot-container">
+            <div class="speech-box">
+              <p>Hello!</p>
+            </div>
+            <img class="mascot" src="images/mascot.png" />
+            <img class="background" src="images/box_bg.png" />
+          </div>
+
+          <h2>What to Expect</h2>
+
+          <p>Beautiful, blue skies expected!</p>
         </div>
       </div>
 
-      <div class="content">
-        <main class="main-home">
-          <div class="announcement">
-            <div class="scrolling-inner" role="marquee">
-              <div class="scrolling-text">
-                <div class="scrolling-item">★★</div>
-                <div class="scrolling-item">
-                  LIMITED-TIME OFFER: Free UNLIMITED access to
-                  <a href="https://brkcoo.github.io">brkcoo.github.io</a>
-                </div>
-                <div class="scrolling-item">★★</div>
-                <div class="scrolling-item">
-                  An inch of time is worth an inch of gold, but an inch of gold
-                  cannot buy an inch of time
-                </div>
-                <div class="scrolling-item">★★</div>
-                <div class="scrolling-item">
-                  Did You Know? "The most common call of an American crow is the
-                  CaaW!-CaaW!-CaaW!"
-                </div>
-                <div class="scrolling-item">★★</div>
-
-                <div class="scrolling-item">
-                  Learn more on
-                  <a href="https://en.wikipedia.org/wiki/American_crow"
-                    >wikipedia.org</a
-                  >
-                </div>
-                <div class="scrolling-item">★★</div>
-                <div class="scrolling-item">
-                  BREAKING NEWS! Jupiter expected to be in retrograde for the
-                  first time in over 75 years. Do you want to know more?
-                </div>
-              </div>
-            </div>
-          </div>
-          <img src="images/brkcoo.png" />
-          <h1>eventually, more things will go here.</h1>
-        </main>
-        <footer class="footer">hey man</footer>
-      </div>
+      <div id="footer">made with love</div>
     </div>
   </body>
+  <script>
+    // visitor count
+    document.getElementById("visitor-count").innerText = `${Math.floor(Math.random() * 10000)}`.padStart(8, "0");
+
+    // mascot
+    const lines = [
+      "Hello!",
+      "Welcome to my page.",
+      "Be yourself; everyone else is already taken.",
+      "It's a great ocean breeze out there on the ocean today!",
+      "A room without books is like a body without a soul.",
+      "It's a great day to go fishing!",
+      "Anyone who has never made a mistake has never tried anything new."
+    ];
+    var index = 1;
+
+    const mascot = document.getElementById("mascot-container");
+    const box = mascot.querySelector("p");
+    mascot.addEventListener("click", () => {
+      box.innerText = lines[index++];
+      index %= lines.length;
+    });
+  </script>
 </html>

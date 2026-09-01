@@ -1,3 +1,10 @@
+* {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -83,7 +90,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items:center;
+  align-items: center;
 }
 .options-container {
   position: absolute;
@@ -286,7 +293,9 @@ body {
   height: 30px;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   border: 2px solid #ccc;
 }
 

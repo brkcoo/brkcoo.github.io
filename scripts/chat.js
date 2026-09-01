@@ -267,6 +267,7 @@ const Chat = (() => {
     overflow: hidden;
     font-family: sans-serif;
     transition: bottom 0.5s ease;
+    z-index:100;
 }
 
 .chat-wrapper.open {
