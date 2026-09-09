@@ -79,6 +79,14 @@ body::-webkit-scrollbar {
   user-select: none;
 }
 
+.tileset-panel {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox, Safari 18.2+, Chromium 121+ */
+}
+.tileset-panel::-webkit-scrollbar {
+  display: none; /* Older Safari and Chromium */
+}
+
 .tile-selection {
   position: absolute;
   border: 1px solid rgba(0, 0, 0, 0.6);
@@ -124,7 +132,7 @@ body::-webkit-scrollbar {
   z-index: 100;
   box-sizing: border-box;
 
-  background: #222;
+  background: #4b4b4b;
   border-left: 1px solid #444;
 
   overflow-y: auto;

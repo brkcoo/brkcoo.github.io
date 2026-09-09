@@ -7,21 +7,23 @@
     <script src="builder.js" type="module"></script>
   </head>
   <body>
-    <div class="wrapper">
-    </div>
+    <div class="wrapper"></div>
     <div class="tileset-panel">
       <div class="tile-selection"></div>
       <img src="tileset.png" />
     </div>
     <div class="options-panel">
-      <img id="layer-2" src="layer3.png" />
-      <img id="layer-1" src="layer2.png" />
-      <img id="layer-0" src="layer1.png" style="background: rgba(255, 255, 255, 0.25)" />
+      <img id="layer-2" src="layer3.png" title="Layer 3"/>
+      <img id="layer-1" src="layer2.png" title="Layer 2"/>
+      <img id="layer-0" src="layer1.png" title="Layer 1" style="background: rgba(255, 255, 255, 0.4)" />
       <hr />
-      <img id="eraser" src="eraser.png" />
+      <img id="rectangle" src="rectangle.png" title="Rectangle Tool"/>
+      <img id="eraser" src="eraser.png" title="Eraser"/>
       <hr />
-      <img id="zoom-in" src="zoomin.png" />
-      <img id="zoom-out" src="zoomout.png" />
+      <img id="zoom-in" src="zoomin.png" title="Zoom In"/>
+      <img id="zoom-out" src="zoomout.png" title="Zoom Out" />
+      <hr />
+      <img src="info.png" title="thanks to SirMalo for the tileset" />
     </div>
   </body>
 </html>

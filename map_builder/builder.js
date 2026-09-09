@@ -3,8 +3,6 @@ const TILESET_TILE_SIZE = 32;
 const MAP_WIDTH = 80;
 const MAP_HEIGHT = 60;
 
-const tilesetCells = new Map();
-
 // layers
 const layers = [];
 var selectedLayer = 0;
@@ -14,10 +12,13 @@ const selectedTile = { x: -1, y: -1, element: null };
 var isTileSelected = false;
 
 // options
-let erasing = false;
+let isUsingEraser = false;
+let isUsingRectangle = false;
 
 const zoomLevels = [0.4, 0.6, 0.8, 1, 1.25, 1.5, 2];
 let currentZoom = 3; // 0 to 6
+
+let rectangleStart = { x: -1, y: -1 };
 
 // elements
 const wrapper = document.querySelector(".wrapper");
@@ -32,6 +33,8 @@ const tileSelectionBox = document.querySelector(".tile-selection");
 // TODO: better layers
 // TODO: boundary drawing
 
+// --------------------------- CANVAS -----------------------------------
+// --------------------------- CANVAS -----------------------------------
 // --------------------------- CANVAS -----------------------------------
 // layer 0
 const canvas = document.createElement("canvas");
@@ -78,6 +81,8 @@ wrapper.style.width = `${canvas.width + 288}px`;
 wrapper.style.height = `${canvas.height}px`;
 
 // --------------------------- GRID -----------------------------------
+// --------------------------- GRID -----------------------------------
+// --------------------------- GRID -----------------------------------
 const grid = document.createElement("div");
 grid.className = "grid";
 
@@ -92,24 +97,53 @@ wrapper.appendChild(grid);
 for (let y = 0; y < MAP_HEIGHT; y++) {
   for (let x = 0; x < MAP_WIDTH; x++) {
     const cell = document.createElement("div");
+
     cell.draggable = false;
-
-    cell.dataset.x = x;
-    cell.dataset.y = y;
-
     cell.style.width = `${TILESIZE}px`;
     cell.style.height = `${TILESIZE}px`;
 
-    cell.style.boxSizing = "border-box";
-    cell.style.borderRight = "1px solid rgba(0, 0, 0, 0.15)";
-    cell.style.borderBottom = "1px solid rgba(0, 0, 0, 0.15)";
-
     cell.addEventListener("pointerdown", () => {
-      drawSelectedTile(cell.dataset.x, cell.dataset.y);
+      if (isUsingRectangle) {
+        rectangleStart = { x, y };
+        return;
+      }
+
+      drawSelectedTile(x, y);
     });
 
     cell.addEventListener("pointerenter", (event) => {
-      // preview draw
+      if (isUsingRectangle & (rectangleStart.x > -1)) {
+        // rectangle preview
+        let xCopies = Math.ceil(Math.abs(rectangleStart.x - x) + 1);
+        let yCopies = Math.ceil(Math.abs(rectangleStart.y - y) + 1);
+
+        let xStart = Math.min(rectangleStart.x, x);
+        let yStart = Math.min(rectangleStart.y, y);
+
+        let xEnd = Math.max(rectangleStart.x, x);
+        let yEnd = Math.max(rectangleStart.y, y);
+
+        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+        for (let i = xStart; i <= xEnd; i++) {
+          for (let j = yStart; j <= yEnd; j++) {
+            previewCtx.drawImage(
+              tilesetCanvas,
+              0,
+              0,
+              tilesetCanvas.width,
+              tilesetCanvas.height,
+              i * TILESIZE,
+              j * TILESIZE,
+              tilesetCanvas.width,
+              tilesetCanvas.height,
+            );
+          }
+        }
+
+        return;
+      }
+
+      // on-grid preview
       if (isTileSelected) {
         previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
         previewCtx.drawImage(
@@ -123,7 +157,7 @@ for (let y = 0; y < MAP_HEIGHT; y++) {
           tilesetCanvas.width,
           tilesetCanvas.height,
         );
-      } else if (erasing) {
+      } else if (isUsingEraser) {
         cell.style.background = "rgba(255, 255, 255, 0.25)";
       }
 
@@ -131,8 +165,35 @@ for (let y = 0; y < MAP_HEIGHT; y++) {
       if (event.buttons & 1) drawSelectedTile(x, y);
     });
 
+    cell.addEventListener("pointerup", () => {
+      if (rectangleStart.x == x && rectangleStart.y == y) {
+        // assume cancel
+        rectangleStart = { x: -1, y: -1 };
+        return;
+      }
+
+      // DRAW RECTANGLE
+      for (let i = Math.min(rectangleStart.x, x); i <= Math.max(rectangleStart.x, x); i++) {
+        for (let j = Math.min(rectangleStart.y, y); j <= Math.max(rectangleStart.y, y); j++) {
+          layers[selectedLayer].drawImage(
+            tilesetCanvas,
+            0,
+            0,
+            tilesetCanvas.width,
+            tilesetCanvas.height,
+            i * TILESIZE,
+            j * TILESIZE,
+            tilesetCanvas.width,
+            tilesetCanvas.height,
+          );
+        }
+      }
+
+      rectangleStart = { x: -1 };
+    });
+
     cell.addEventListener("pointerleave", () => {
-      if (erasing) cell.style.background = "";
+      if (isUsingEraser) cell.style.background = ""; // remove erase preview highlight
     });
 
     grid.appendChild(cell);
@@ -142,8 +203,11 @@ for (let y = 0; y < MAP_HEIGHT; y++) {
 // delete preview when grid not interacted with
 grid.addEventListener("pointerleave", () => {
   previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+  rectangleStart = { x: -1 };
 });
 
+// --------------------------- TILESET -----------------------------------
+// --------------------------- TILESET -----------------------------------
 // --------------------------- TILESET -----------------------------------
 const tilesetPanel = document.querySelector(".tileset-panel");
 const tileset = tilesetPanel.querySelector("img");
@@ -181,7 +245,7 @@ tileset.addEventListener("load", () => {
         }
 
         // deselect eraser
-        erasing = false;
+        isUsingEraser = false;
         eraser.style.background = "";
 
         // select new
@@ -253,8 +317,10 @@ function clearSelectedTile() {
 }
 
 // --------------------------- DRAWING -----------------------------------
+// --------------------------- DRAWING -----------------------------------
+// --------------------------- DRAWING -----------------------------------
 function drawSelectedTile(x, y) {
-  if (erasing) {
+  if (isUsingEraser) {
     layers[selectedLayer].clearRect(x * TILESIZE, y * TILESIZE, TILESET_TILE_SIZE, TILESET_TILE_SIZE);
     if (selectedLayer == 0) ctx.fillRect(x * TILESIZE, y * TILESIZE, TILESET_TILE_SIZE, TILESET_TILE_SIZE);
   }
@@ -275,10 +341,25 @@ function drawSelectedTile(x, y) {
 }
 
 // --------------------------- OPTIONS -----------------------------------
+// --------------------------- OPTIONS -----------------------------------
+// --------------------------- OPTIONS -----------------------------------
 document.getElementById("eraser").addEventListener("click", () => {
+  // cancel other
+  isUsingRectangle = false;
+  rectangle.style.background = "";
+
   clearSelectedTile();
-  erasing = !erasing;
-  eraser.style.background = erasing ? "rgba(255,255,255,.25)" : "";
+
+  isUsingEraser = !isUsingEraser;
+  eraser.style.background = isUsingEraser ? "rgba(255,255,255,.25)" : "";
+});
+
+document.getElementById("rectangle").addEventListener("click", () => {
+  isUsingEraser = false;
+  eraser.style.background = "";
+
+  isUsingRectangle = !isUsingRectangle;
+  rectangle.style.background = isUsingRectangle ? "rgba(255,255,255,.25)" : "";
 });
 
 function zoom(amt) {
