@@ -27,15 +27,26 @@ const tilesetCanvas = document.createElement("canvas");
 const tilesetCtx = tilesetCanvas.getContext("2d");
 const tileSelectionBox = document.querySelector(".tile-selection");
 
+// TODO: boundary drawing
 // TODO: make grid saveable (each gridpiece stores state information --> export into .json)
 // TODO: zoom in/out with wheel , pan with wheel drag
-// TODO: rectangle draw
 // TODO: better layers
-// TODO: boundary drawing
 
 // --------------------------- CANVAS -----------------------------------
 // --------------------------- CANVAS -----------------------------------
 // --------------------------- CANVAS -----------------------------------
+// background
+const bgcanvas = document.createElement("canvas");
+bgcanvas.width = TILESIZE * MAP_WIDTH;
+bgcanvas.height = TILESIZE * MAP_HEIGHT;
+wrapper.appendChild(bgcanvas);
+
+const bgctx = bgcanvas.getContext("2d");
+bgctx.imageSmoothingEnabled = false;
+
+bgctx.fillStyle = "#77bbdd";
+bgctx.fillRect(0, 0, bgcanvas.width, bgcanvas.height);
+
 // layer 0
 const canvas = document.createElement("canvas");
 canvas.width = TILESIZE * MAP_WIDTH;
@@ -44,8 +55,6 @@ wrapper.appendChild(canvas);
 
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
-ctx.fillStyle = "#77bbdd";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 // layer 1
 const canvas2 = document.createElement("canvas");
@@ -322,7 +331,6 @@ function clearSelectedTile() {
 function drawSelectedTile(x, y) {
   if (isUsingEraser) {
     layers[selectedLayer].clearRect(x * TILESIZE, y * TILESIZE, TILESET_TILE_SIZE, TILESET_TILE_SIZE);
-    if (selectedLayer == 0) ctx.fillRect(x * TILESIZE, y * TILESIZE, TILESET_TILE_SIZE, TILESET_TILE_SIZE);
   }
 
   if (isTileSelected) {
@@ -343,6 +351,7 @@ function drawSelectedTile(x, y) {
 // --------------------------- OPTIONS -----------------------------------
 // --------------------------- OPTIONS -----------------------------------
 // --------------------------- OPTIONS -----------------------------------
+// erase
 document.getElementById("eraser").addEventListener("click", () => {
   // cancel other
   isUsingRectangle = false;
@@ -354,6 +363,7 @@ document.getElementById("eraser").addEventListener("click", () => {
   eraser.style.background = isUsingEraser ? "rgba(255,255,255,.25)" : "";
 });
 
+// rectangle
 document.getElementById("rectangle").addEventListener("click", () => {
   isUsingEraser = false;
   eraser.style.background = "";
@@ -362,6 +372,7 @@ document.getElementById("rectangle").addEventListener("click", () => {
   rectangle.style.background = isUsingRectangle ? "rgba(255,255,255,.25)" : "";
 });
 
+// zoom
 function zoom(amt) {
   currentZoom = Math.min(zoomLevels.length - 1, Math.max(0, amt));
   const zoomLevel = zoomLevels[currentZoom];
@@ -380,6 +391,29 @@ document.getElementById("zoom-out").addEventListener("click", () => {
   zoom(currentZoom - 1);
 });
 
+// save (as image)
+document.getElementById("save-button").addEventListener("click", () => {
+  const exportCanvas = document.createElement("canvas");
+  exportCanvas.width = TILESIZE * MAP_WIDTH;
+  exportCanvas.height = TILESIZE * MAP_HEIGHT;
+
+  const exportCtx = exportCanvas.getContext("2d");
+  exportCtx.imageSmoothingEnabled = false;
+
+  for (let i = 0; i < layers.length; i++) {
+    // merge layers down
+    exportCtx.drawImage(layers[i].canvas, 0, 0);
+  }
+
+  var link = document.createElement("a");
+  link.download = "map.png";
+  link.href = exportCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+  link.click();
+});
+
+// export (reusable + marked for exploration)
+
+// layer selection
 document.getElementById("layer-0").addEventListener("click", () => {
   selectedLayer = 0;
   document.getElementById("layer-0").style.background = "rgba(255,255,255,.25)";

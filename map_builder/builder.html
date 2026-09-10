@@ -1,29 +1,47 @@
 <!doctype html>
 <html>
   <head>
-    <title>SinnohRPG</title>
+    <title>Map Builder</title>
     <link rel="stylesheet" type="text/css" href="builder.css" />
     <link rel="icon" type="image/png" href="../favicon.ico" />
     <script src="builder.js" type="module"></script>
   </head>
+
   <body>
+    <!-- canvas wrapper -->
     <div class="wrapper"></div>
+
+    <!-- tile selection panel -->
     <div class="tileset-panel">
       <div class="tile-selection"></div>
-      <img src="tileset.png" />
+      <div class="tileset-selection" style="display: none">
+        <!-- FOR FUTURE USE (buildings + indoor tilesets)-->
+        <button onclick="selectTileset(1)">1</button>
+        <button onclick="selectTileset(2)">2</button>
+        <button onclick="selectTileset(3)">3</button>
+        <script>
+          function selectTileset(index) {
+            document.getElementById("the-tileset").src = `tileset_${index}.png`;
+          }
+        </script>
+      </div>
+      <img id="the-tileset" src="tileset_1.png" />
     </div>
+
+    <!-- options -->
     <div class="options-panel">
-      <img id="layer-2" src="layer3.png" title="Layer 3"/>
-      <img id="layer-1" src="layer2.png" title="Layer 2"/>
-      <img id="layer-0" src="layer1.png" title="Layer 1" style="background: rgba(255, 255, 255, 0.4)" />
+      <img id="layer-2" src="icons/layer3.png" title="Layer 3" />
+      <img id="layer-1" src="icons/layer2.png" title="Layer 2" />
+      <img id="layer-0" src="icons/layer1.png" title="Layer 1" style="background: rgba(255, 255, 255, 0.4)" />
       <hr />
-      <img id="rectangle" src="rectangle.png" title="Rectangle Tool"/>
-      <img id="eraser" src="eraser.png" title="Eraser"/>
+      <img id="rectangle" src="icons/rectangle.png" title="Rectangle Tool" />
+      <img id="eraser" src="icons/eraser.png" title="Eraser" />
       <hr />
-      <img id="zoom-in" src="zoomin.png" title="Zoom In"/>
-      <img id="zoom-out" src="zoomout.png" title="Zoom Out" />
+      <img id="zoom-in" src="icons/zoomin.png" title="Zoom In" />
+      <img id="zoom-out" src="icons/zoomout.png" title="Zoom Out" />
       <hr />
-      <img src="info.png" title="thanks to SirMalo for the tileset" />
+      <img id="save-button" src="icons/save.png" title="save/export map" />
+      <img src="icons/info.png" title="thanks to SirMalo for the tileset" />
     </div>
   </body>
 </html>
