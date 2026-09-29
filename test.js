@@ -1,25 +1,55 @@
+<div id="info">Loading...</div>
+<button id="permission">Request permission</button>
+
+<script>
 const info = document.getElementById("info");
 
-async function requestOrientationPermission() {
-  if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-    const permission = await DeviceOrientationEvent.requestPermission();
-
-    if (permission === "granted") {
-      startOrientation();
-    } else {
-      info.innerText = "Orientation permission denied";
-    }
-  } else {
-    startOrientation();
-  }
-}
+info.innerText =
+    `Secure: ${window.isSecureContext}\n` +
+    `DeviceOrientationEvent: ${"DeviceOrientationEvent" in window}\n` +
+    `RequestPermission: ${
+        typeof DeviceOrientationEvent?.requestPermission
+    }`;
 
 function startOrientation() {
-  window.addEventListener("deviceorientation", (event) => {
-    info.innerText = `
-            beta: ${event.beta}
-            gamma: ${event.gamma}
-            alpha: ${event.alpha}
-        `;
-  });
+    console.log("Adding listener");
+
+    window.addEventListener("deviceorientation", (event) => {
+        console.log("ORIENTATION EVENT", event);
+
+        info.innerText =
+            `beta: ${event.beta}\n` +
+            `gamma: ${event.gamma}\n` +
+            `alpha: ${event.alpha}`;
+    });
+
+    info.innerText += "\nListener added";
 }
+
+document.getElementById("permission").addEventListener("click", async () => {
+    console.log("Permission button clicked");
+
+    if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+        try {
+            const permission =
+                await DeviceOrientationEvent.requestPermission();
+
+            console.log("Permission:", permission);
+
+            if (permission === "granted") {
+                startOrientation();
+            } else {
+                info.innerText += `\nPermission: ${permission}`;
+            }
+        } catch (e) {
+            console.error(e);
+            info.innerText += `\nERROR: ${e}`;
+        }
+    } else {
+        startOrientation();
+    }
+});
+</script>
