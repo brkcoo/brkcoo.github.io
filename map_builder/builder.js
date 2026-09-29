@@ -28,8 +28,8 @@ const tilesetCtx = tilesetCanvas.getContext("2d");
 const tileSelectionBox = document.querySelector(".tile-selection");
 
 // TODO: boundary drawing
-// TODO: make grid saveable (each gridpiece stores state information --> export into .json)
-// TODO: zoom in/out with wheel , pan with wheel drag
+// TODO: map export (save individual cell information)
+// TODO: pan with wheel drag
 // TODO: better layers
 
 // --------------------------- CANVAS -----------------------------------
