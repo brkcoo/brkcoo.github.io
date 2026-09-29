@@ -1,20 +1,25 @@
 const info = document.getElementById("info");
 
-if (window.DeviceOrientationEvent) {
-  window.addEventListener(
-    "deviceorientation",
-    (event) => {
-      const rotateDegrees = event.alpha; // alpha: rotation around z-axis
-      const leftToRight = event.gamma; // gamma: left to right
-      const frontToBack = event.beta; // beta: front back motion
+async function requestOrientationPermission() {
+  if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+    const permission = await DeviceOrientationEvent.requestPermission();
 
-      handleOrientationEvent(frontToBack, leftToRight, rotateDegrees);
-    },
-    true,
-  );
+    if (permission === "granted") {
+      startOrientation();
+    } else {
+      info.innerText = "Orientation permission denied";
+    }
+  } else {
+    startOrientation();
+  }
 }
 
-function handleOrientationEvent(frontToBack, leftToRight, rotateDegrees) {
-  info.innerText = `
-    ${frontToBack}, ${leftToRight}, ${rotateDegrees}`;
+function startOrientation() {
+  window.addEventListener("deviceorientation", (event) => {
+    info.innerText = `
+            beta: ${event.beta}
+            gamma: ${event.gamma}
+            alpha: ${event.alpha}
+        `;
+  });
 }
