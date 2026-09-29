@@ -1,55 +1,35 @@
-<div id="info">Loading...</div>
-<button id="permission">Request permission</button>
+const ball = document.querySelector(".ball");
+const garden = document.querySelector(".garden");
+const output = document.querySelector(".output");
 
-<script>
-const info = document.getElementById("info");
+const maxX = garden.clientWidth - ball.clientWidth;
+const maxY = garden.clientHeight - ball.clientHeight;
 
-info.innerText =
-    `Secure: ${window.isSecureContext}\n` +
-    `DeviceOrientationEvent: ${"DeviceOrientationEvent" in window}\n` +
-    `RequestPermission: ${
-        typeof DeviceOrientationEvent?.requestPermission
-    }`;
+function handleOrientation(event) {
+  let x = event.beta; // In degree in the range [-180,180)
+  let y = event.gamma; // In degree in the range [-90,90)
 
-function startOrientation() {
-    console.log("Adding listener");
+  output.textContent = `beta: ${x}\n`;
+  output.textContent += `gamma: ${y}\n`;
 
-    window.addEventListener("deviceorientation", (event) => {
-        console.log("ORIENTATION EVENT", event);
+  // Because we don't want to have the device upside down
+  // We constrain the x value to the range [-90,90]
+  if (x > 90) {
+    x = 90;
+  }
+  if (x < -90) {
+    x = -90;
+  }
 
-        info.innerText =
-            `beta: ${event.beta}\n` +
-            `gamma: ${event.gamma}\n` +
-            `alpha: ${event.alpha}`;
-    });
+  // To make computation easier we shift the range of
+  // x and y to [0,180]
+  x += 90;
+  y += 90;
 
-    info.innerText += "\nListener added";
+  // 10 is half the size of the ball
+  // It centers the positioning point to the center of the ball
+  ball.style.left = `${(maxY * y) / 180 - 10}px`; // rotating device around the y axis moves the ball horizontally
+  ball.style.top = `${(maxX * x) / 180 - 10}px`; // rotating device around the x axis moves the ball vertically
 }
 
-document.getElementById("permission").addEventListener("click", async () => {
-    console.log("Permission button clicked");
-
-    if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-        try {
-            const permission =
-                await DeviceOrientationEvent.requestPermission();
-
-            console.log("Permission:", permission);
-
-            if (permission === "granted") {
-                startOrientation();
-            } else {
-                info.innerText += `\nPermission: ${permission}`;
-            }
-        } catch (e) {
-            console.error(e);
-            info.innerText += `\nERROR: ${e}`;
-        }
-    } else {
-        startOrientation();
-    }
-});
-</script>
+window.addEventListener("deviceorientation", handleOrientation);

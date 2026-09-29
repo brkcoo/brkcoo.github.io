@@ -3,56 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <title>brkcoo</title>
-    <link rel="stylesheet" href="styles/home.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <script src="test.js"></script>
-  </head>
-  <body>
-    <div id="info">Loading...</div>
-    <button id="permission">Request permission</button>
-
-    <script>
-      const info = document.getElementById("info");
-
-      info.innerText =
-        `Secure: ${window.isSecureContext}\n` +
-        `DeviceOrientationEvent: ${"DeviceOrientationEvent" in window}\n` +
-        `RequestPermission: ${typeof DeviceOrientationEvent?.requestPermission}`;
-
-      function startOrientation() {
-        console.log("Adding listener");
-
-        window.addEventListener("deviceorientation", (event) => {
-          console.log("ORIENTATION EVENT", event);
-
-          info.innerText = `beta: ${event.beta}\n` + `gamma: ${event.gamma}\n` + `alpha: ${event.alpha}`;
-        });
-
-        info.innerText += "\nListener added";
+    <style>
+      .garden {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border: 5px solid #cccccc;
+        border-radius: 10px;
       }
 
-      document.getElementById("permission").addEventListener("click", async () => {
-        console.log("Permission button clicked");
-
-        if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-          try {
-            const permission = await DeviceOrientationEvent.requestPermission();
-
-            console.log("Permission:", permission);
-
-            if (permission === "granted") {
-              startOrientation();
-            } else {
-              info.innerText += `\nPermission: ${permission}`;
-            }
-          } catch (e) {
-            console.error(e);
-            info.innerText += `\nERROR: ${e}`;
-          }
-        } else {
-          startOrientation();
-        }
-      });
-    </script>
+      .ball {
+        position: absolute;
+        top: 90px;
+        left: 90px;
+        width: 20px;
+        height: 20px;
+        background: green;
+        border-radius: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="garden">
+      <div class="ball"></div>
+    </div>
+    Hold the device parallel to the ground. Rotate along its x and y axes to see the ball move up/down and left/right respectively.
+    <pre class="output"></pre>
   </body>
 </html>
